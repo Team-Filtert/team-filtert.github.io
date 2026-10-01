@@ -2,7 +2,7 @@
 title: "Devlog #5: We're pretty busy"
 summary: "We are all pretty busy with life, but we are working hard on our projects, so here is some concept art"
 author: [lukas]
-published: 2026-09-20
+published: 2026-10-01
 ---
 
 ## We're sorry
@@ -49,3 +49,5 @@ We still have to further work on some of these concepts and write the actual dia
 We know that the progress is slow, but we're trying our best to make this game a success.
 
 So please keep supporting us, spread the word and if you want to contribute, join us!
+
+Stay tuned for more updates!
