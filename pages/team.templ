@@ -1,0 +1,124 @@
+package pages
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	"github.com/Team-Filtert/Webside/templates"
+)
+
+// TeamGroup is one department section on the team page.
+type TeamGroup struct {
+	Title        string
+	Key          string
+	Members      []templates.Member
+	ShowLanguage bool
+}
+
+templ Team(c ssg.Ctx, heads []templates.Member, groups []TeamGroup) {
+	@templates.Layout(c, templates.Meta{
+		Title:       "The Team",
+		Description: "Meet the artists, writers, musicians, designers, programmers, and translators behind Team Filtered.",
+	}, teamStyles()) {
+		<header class="story">
+			<h1>The Team</h1>
+			<p>
+				We are Team Filtered, a group of Neuro fans and other artists, that
+				formed to bring the idea of this game to life.
+			</p>
+			<p>
+				Here you can learn more about the team and their roles.
+				<br/>
+				They are sorted by departments but not necessarily by role.
+			</p>
+			<p>
+    			You can also have a look at the <a href={ c.Link("credits/") }>creadits here</a>
+			</p>
+		</header>
+
+		<section>
+			<h2>Meet the Team leaders</h2>
+			<div class="characters">
+				for _, m := range heads {
+					@templates.MemberCard(c, m, false, m.Slug, true)
+				}
+			</div>
+		</section>
+
+		for _, group := range groups {
+			<section>
+				<h2>{ group.Title }</h2>
+				<div class="characters">
+					for _, m := range group.Members {
+						@templates.MemberCard(c, m, group.ShowLanguage, group.Key+"-"+m.Slug, false)
+					}
+				</div>
+			</section>
+		}
+
+		<script type="module" src={ c.Asset("scripts/team.js") }></script>
+	}
+}
+
+templ teamStyles() {
+	<style>
+		.bio-swarm-scribes:link {
+				color: #ffeeda;
+			}
+
+			.bio-swarm-scribes:visited {
+				color: #ff93ad;
+			}
+
+			.bio-neuropilot-vscode:link {
+				color: #ffa3cb;
+			}
+
+			.bio-neuropilot-vscode:visited {
+				color: #ffe0f0;
+			}
+
+			.bio-neurowiki:link {
+				color: #f3c9ad;
+			}
+
+			.bio-neurowiki:visited {
+				color: #a6817e;
+			}
+
+			.bio-neuroOMEGALUL {
+				width: 1em;
+				height: 1em;
+			}
+
+			.bio-twitch {
+				color: #9146ff;
+			}
+
+			.bio-twitch:visited {
+				color: #7a21ff;
+			}
+
+			.bio-youtube {
+				color: #b2071d;
+			}
+
+			.bio-youtube:visited {
+				color: #e30725;
+			}
+
+			.bio-github {
+				color: #ffffff;
+			}
+
+			.bio-github:visited {
+				color: #828181;
+			}
+
+			.bio-discord {
+				color: #9656ce;
+			}
+
+			.bio-discord:visited {
+				color: #cab2fb;
+			}
+	</style>
+}

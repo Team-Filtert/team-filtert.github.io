@@ -1,0 +1,29 @@
+package pages
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	"github.com/Team-Filtert/Webside/templates"
+)
+
+templ Updates(c ssg.Ctx, posts []templates.Update) {
+	@templates.Layout(c, templates.Meta{
+		Title:       "Updates",
+		Description: "All Team Filtered devlogs in one place.",
+	}, nil) {
+		<header class="updates">
+			<div class="inner">
+				<h1 class="update-h">Updates</h1>
+				<p class="tagline">Here you can find all our devlogs</p>
+				<span class="post-count">{ len(posts) } Devlogs</span>
+			</div>
+		</header>
+
+		<section>
+			<div>
+				for _, post := range posts {
+					@templates.UpdateCard(c, post)
+				}
+			</div>
+		</section>
+	}
+}

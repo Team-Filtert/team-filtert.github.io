@@ -1,0 +1,58 @@
+package templates
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	templpkg "github.com/a-h/templ"
+)
+
+// Layout is the page shell. Every asset and internal link goes through Ctx so
+// the build works at a domain root and under a subpath without a rebuild.
+//
+// meta carries the page-specific title, description and social preview.
+// styles is the page's own style component, rendered after the footer so the
+// CSS sits at the bottom of the document. Pages without extra styles pass nil.
+templ Layout(c ssg.Ctx, meta Meta, styles templpkg.Component) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<link rel="icon" href={ c.Asset("img/icon.png") }/>
+			<title>{ meta.TitleTag() }</title>
+			<meta name="description" content={ meta.DescriptionTag() }/>
+			<link rel="canonical" href={ SiteURL + c.URL() }/>
+			<meta property="og:title" content={ meta.TitleTag() }/>
+			<meta property="og:description" content={ meta.DescriptionTag() }/>
+			<meta property="og:image" content={ meta.ImageURL() }/>
+			<meta property="og:url" content={ SiteURL + c.URL() }/>
+			<meta property="og:type" content={ meta.OGType() }/>
+			<meta property="og:site_name" content="Team Filtered"/>
+			<meta name="twitter:card" content="summary_large_image"/>
+			<meta name="twitter:title" content={ meta.TitleTag() }/>
+			<meta name="twitter:description" content={ meta.DescriptionTag() }/>
+			<meta name="twitter:image" content={ meta.ImageURL() }/>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link
+				href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@300;500;700&display=swap"
+				rel="stylesheet"
+			/>
+			<link rel="stylesheet" href={ c.Asset("style/style.css") }/>
+			<link rel="stylesheet" href={ c.Asset("style/stars.css") }/>
+			<link rel="stylesheet" href={ c.Asset("style/cards.css") }/>
+			<link rel="stylesheet" href={ c.Asset("style/updates.css") }/>
+			<script type="module" src={ c.Asset("scripts/main.js") }></script>
+		</head>
+		<body>
+			<div id="stars"></div>
+			@Nav(c)
+			<main>
+				{ children... }
+			</main>
+			@Footer(c)
+			@FooterStyles()
+			if styles != nil {
+				@styles
+			}
+		</body>
+	</html>
+}

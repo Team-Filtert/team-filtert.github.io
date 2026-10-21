@@ -4,37 +4,58 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 concurrency:
   group: "pages"
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+
+      - uses: actions/configure-pages@v5
+
+      - run: npm install -g typescript@6.0.3
+
+      - name: Generate templates
+        run: go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate
+
+      # The site is served from the team-filtered.org domain root. Relative
+      # URLs mean this build also works when previewed locally.
+      - name: Build
+        run: go run .
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: ./build
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
       pages: write
       id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-      - uses: pnpm/action-setup@v6
-        with:
-          version: 11
-      - uses: actions/setup-node@v6
-        with:
-          node-version: '24.12.0'
-          cache: 'pnpm'
-          cache-dependency-path: ./pnpm-lock.yaml
-      - run: pnpm install --frozen-lockfile
-      - run: pnpm run build
-      - uses: actions/upload-pages-artifact@v5
-        with:
-          path: ./dist
       - uses: actions/deploy-pages@v5
         id: deployment

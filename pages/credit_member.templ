@@ -1,0 +1,48 @@
+package pages
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	"github.com/Team-Filtert/Webside/templates"
+)
+
+templ CreditMember(c ssg.Ctx, member templates.Member, assets []templates.AssetEntry) {
+	@templates.Layout(c, templates.Meta{
+		Title:       "Credits: " + member.Name,
+		Description: "Artwork by " + member.Name + " for Team Filtered.",
+	}, creditMemberStyles()) {
+		<header class="story">
+			<h1>{ member.Name }</h1>
+			if member.Description != "" {
+				<p>{ member.Description }</p>
+			}
+		</header>
+
+		<section>
+			<div class="credits-bio">
+				@templates.MemberBio(c, member.Body)
+			</div>
+
+			<h2>Artwork</h2>
+			if len(assets) == 0 {
+				<p class="credits-empty">No catalogued assets yet.</p>
+			} else {
+				<div class="gallery">
+					for _, asset := range assets {
+						@templates.AssetWithLicense(c, asset.ID)
+					}
+				</div>
+			}
+
+			<p class="credits-back">
+				<a href={ c.Link("credits/") }>&larr; Back to credits</a>
+			</p>
+		</section>
+	}
+}
+
+// creditMemberStyles adds the bio link colours used by teamStyles to the
+// credits styles, since a member's bio also appears on this page.
+templ creditMemberStyles() {
+	@creditsStyles()
+	@teamStyles()
+}

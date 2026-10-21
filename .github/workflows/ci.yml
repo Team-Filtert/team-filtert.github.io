@@ -1,30 +1,38 @@
 name: CI
 
 on:
-    push:
-    pull_request:
-    workflow_dispatch:
+  push:
+  pull_request:
+  workflow_dispatch:
 
 permissions: {}
 
 jobs:
-    astro:
-        name: astro check
-        runs-on: ubuntu-latest
-        steps:
-            - uses: actions/checkout@v6
-              with:
-                persist-credentials: false
-            
-            - uses: pnpm/action-setup@v6
-              with:
-                version: 11.x
-            
-            - uses: actions/setup-node@v6
-              with:
-                node-version: 24.x
-                cache: pnpm
-                cache-dependency-path: ./pnpm-lock.yaml
-            
-            - run: pnpm install
-            - run: pnpm check
+  build:
+    name: generate, vet and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache-dependency-path: go.sum
+
+      # tsc is what astwerk's CompileFrom uses for scripts/*.ts.
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24.x
+
+      - run: npm install -g typescript@6.0.3
+
+      - name: Generate templates
+        run: go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate
+
+      - run: go vet ./...
+      - run: go build ./...
+
+      - name: Build the site
+        run: go run .

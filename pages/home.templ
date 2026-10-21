@@ -1,0 +1,103 @@
+package pages
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	"github.com/Team-Filtert/Webside/templates"
+)
+
+templ Home(c ssg.Ctx, latest templates.Update, leaders []templates.Member) {
+	@templates.Layout(c, templates.Meta{}, nil) {
+		<header class="hero" id="hero">
+			<img
+				class="logo"
+				src={ c.Asset("img/NGEF_logo.png") }
+				alt="Neuro-sama: The Good, The Evil And The Filtered logo"
+			/>
+
+			<h1>Neuro-sama: The Good, The Evil And The Filtered</h1>
+
+			<p id="typing"></p>
+
+			<div class="link-btns">
+				<a href={ c.Link("updates/") }>
+					<div class="btn">
+						<span>Patch Notes</span>
+					</div>
+				</a>
+
+				<a href="https://discord.gg/nAXzxMY9gT" target="_blank" rel="noopener noreferrer">
+					<div class="btn">
+						<span>
+							Discord <img
+								class="link-logo"
+								src={ c.Asset("assets/logos/discord-svgrepo-com.svg") }
+								alt="Discord"
+							/>
+						</span>
+					</div>
+				</a>
+
+				<a href={ c.Link("contact/") }>
+					<div class="btn">
+						<span>Contact us</span>
+					</div>
+				</a>
+			</div>
+		</header>
+
+		<section id="about">
+			<h2><a href={ c.Link("about/") }>About the game</a></h2>
+			<p>
+				Neuro-sama: The Good, The Evil, And The Filtered is a JRPG in which
+				Neuro and Evil are sent on an adventure through seven different
+				worlds. Along the way, they'll meet many friends, some of whom will
+				help them on their journey, while others, corrupted by the filter,
+				will stand in their way and have to be brought back to normal.
+			</p>
+			<br/>
+			<a href={ c.Link("about/") } class="other_page">Learn more...</a>
+		</section>
+
+		<section id="team">
+			<h2><a href={ c.Link("team/") }>The Team</a></h2>
+			<p>
+				We are Team Filtered, a group of Neuro fans and other artists, that
+				formed to bring the idea of this game to life.
+			</p>
+			<h3>Meet the Team leaders</h3>
+			<div class="characters">
+				for _, m := range leaders {
+					@templates.LeaderCard(c, m)
+				}
+			</div>
+			<br/>
+			<a href={ c.Link("team/") } class="other_page">Meet the entire team!</a>
+		</section>
+
+		<section id="posters">
+			<h2>Posters</h2>
+
+			<div class="gallery">
+				@templates.Asset(c, "NGEF_Poster.png")
+				@templates.Asset(c, "NGEF_Mini_Poster.jpg")
+				@templates.Asset(c, "NGEF_Nere_Poster.png")
+				@templates.Asset(c, "Evil_Poster.jpg")
+				@templates.Asset(c, "ellie_poster.png")
+			</div>
+		</section>
+
+		<section id="updates">
+			<h2><a href={ c.Link("updates/") }>Dev logs</a></h2>
+			<p>
+				We are going to regularly/semi-regularly make dev logs, or whenever
+				there is a big update.
+			</p>
+			<h2>Latest Update</h2>
+			<div class="patch">
+				@templates.UpdateCard(c, latest)
+			</div>
+			<br/>
+			<a href={ c.Link("updates/") } class="other_page">See other posts</a>
+		</section>
+	}
+}
