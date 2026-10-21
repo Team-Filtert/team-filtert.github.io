@@ -27,7 +27,7 @@ Deployment is still GitHub Pages, so nothing changes on your end. It just takes 
 <details>
 <summary>Let me talk about astwerk a bit.</summary>
 
-Astwerk is a static site generator for Go and [templ](https://templ.guide/). I built it because I really don't like JavaScript and the Node.js ecosystem, but I want to do web development in a language I actually enjoy, with a build that is just `go run .` and a framework that gives you total freedom and control to do things the way you want. It's still pre-1.0, and this site is one of the first to use it. The others are the [Astwerk website](https://lukasderbaum42.github.io/astwerk-website/) (slightly outdated, as I plan on updating it together with a big planned feature) and my personal website, so most of it gets used and abused here as a form of stress test.
+Astwerk is a static site generator for Go and [templ](https://templ.guide/). I built it because I really don't like JavaScript and the Node.js ecosystem, but I want to do web development in a language I actually enjoy, with a build that is just `go run .` and a framework that gives you total freedom and control to do things the way you want. It's still pre-1.0, and this site is one of the first to use it. The others are the [Astwerk website](https://lukasderbaum42.github.io/astwerk-website/) and my personal website, so most of it gets used and abused here as a form of stress test.
 
 The basic model is a tree of nodes written in Go. A node can be a page, a directory, a folder copied from `public/`, or a set of pages generated from a collection. Children hang off their parent, and the shared chrome — layout, nav, footer — is just templ components. There is no file-system routing convention to learn: the tree in `main.go` is the site.
 
