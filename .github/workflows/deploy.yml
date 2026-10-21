@@ -3,7 +3,7 @@ name: Deploy pages
 on:
   push:
     branches:
-      - main
+      - astwerk-rewrite
 
 concurrency:
   group: "pages"
