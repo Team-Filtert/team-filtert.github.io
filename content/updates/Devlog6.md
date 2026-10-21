@@ -2,7 +2,7 @@
 title = "Devlog #6: Yet another rewrite..."
 summary = "I did a nother rewrite. We made progress on the actuall game."
 author = ["lukas"]
-published = 2026-10-22
+published = "draft"
 +++
 
 ## The website rewrite
