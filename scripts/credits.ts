@@ -1,41 +1,66 @@
-const buttons = document.querySelectorAll<HTMLButtonElement>("[data-credit-filter]");
-const cards = document.querySelectorAll<HTMLElement>("[data-tags]");
-const sections = document.querySelectorAll<HTMLElement>("[data-credit-member]");
-const empty = document.querySelector<HTMLElement>("[data-credit-empty]");
+const buttons: NodeListOf<HTMLButtonElement> =
+  document.querySelectorAll<HTMLButtonElement>("[data-credit-filter]");
+const cards: NodeListOf<HTMLElement> =
+  document.querySelectorAll<HTMLElement>("[data-tags]");
+const sections: NodeListOf<HTMLElement> =
+  document.querySelectorAll<HTMLElement>("[data-credit-member]");
+const empty: HTMLElement | null =
+  document.querySelector<HTMLElement>("[data-credit-empty]");
 
-function apply(tag: string) {
-  let visible = 0;
+function readTags(card: HTMLElement): string[] {
+  return (card.dataset.tags ?? "").split(",").filter(Boolean);
+}
 
-  cards.forEach((card) => {
-    const tags = (card.dataset.tags ?? "").split(",").filter(Boolean);
-    const show = tag === "" || tags.includes(tag);
+function apply(tag: string): void {
+  let visible: number = 0;
+
+  cards.forEach((card: HTMLElement): void => {
+    const cardTags: string[] = readTags(card);
+    const show: boolean = tag === "" || cardTags.includes(tag);
     card.hidden = !show;
     if (show) {
       visible += 1;
     }
   });
 
-  sections.forEach((section) => {
-    const shown =
-      section.querySelector<HTMLElement>("[data-tags]:not([hidden])") !== null;
+  sections.forEach((section: HTMLElement): void => {
+    const shown: boolean =
+      section.querySelector("[data-tags]:not([hidden])") !== null;
     section.hidden = !shown;
   });
 
-  if (empty) {
+  if (empty !== null) {
     empty.hidden = visible > 0;
   }
 
-  buttons.forEach((button) => {
-    const active = (button.dataset.creditFilter ?? "") === tag;
+  buttons.forEach((button: HTMLButtonElement): void => {
+    const active: boolean = (button.dataset.creditFilter ?? "") === tag;
     button.classList.toggle("active", active);
     button.setAttribute("aria-pressed", String(active));
   });
 }
 
-buttons.forEach((button) => {
-  button.addEventListener("click", () => apply(button.dataset.creditFilter ?? ""));
+buttons.forEach((button: HTMLButtonElement): void => {
+  button.addEventListener("click", (): void => {
+    apply(button.dataset.creditFilter ?? "");
+  });
 });
 
-apply("");
+const knownTags: Set<string> = new Set<string>(
+  Array.from(
+    buttons,
+    (button: HTMLButtonElement): string => button.dataset.creditFilter ?? "",
+  ),
+);
+
+// The footer links to /credits/#<tag>, so honour the fragment on load and when
+// it changes.
+function applyFromHash(): void {
+  const tag: string = decodeURIComponent(window.location.hash.slice(1));
+  apply(knownTags.has(tag) ? tag : "");
+}
+
+window.addEventListener("hashchange", applyFromHash);
+applyFromHash();
 
 export {};

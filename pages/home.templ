@@ -5,7 +5,7 @@ import (
 	"github.com/Team-Filtert/Webside/templates"
 )
 
-templ Home(c ssg.Ctx, latest templates.Update, leaders []templates.Member) {
+templ Home(c ssg.Ctx, recent []templates.Update, leaders []templates.Member) {
 	@templates.Layout(c, templates.Meta{}, nil) {
 		<header class="hero" id="hero">
 			<img
@@ -92,9 +92,11 @@ templ Home(c ssg.Ctx, latest templates.Update, leaders []templates.Member) {
 				We are going to regularly/semi-regularly make dev logs, or whenever
 				there is a big update.
 			</p>
-			<h2>Latest Update</h2>
+			<h2>Latest Updates</h2>
 			<div class="patch">
-				@templates.UpdateCard(c, latest)
+				for _, u := range recent {
+					@templates.UpdateCard(c, u)
+				}
 			</div>
 			<br/>
 			<a href={ c.Link("updates/") } class="other_page">See other posts</a>

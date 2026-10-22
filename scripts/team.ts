@@ -1,8 +1,11 @@
-const cards = Array.from(document.querySelectorAll<HTMLElement>(".card"));
+const cards: HTMLElement[] = Array.from(
+  document.querySelectorAll<HTMLElement>(".card"),
+);
 
-function setExpanded(card: HTMLElement, expanded: boolean) {
-  const header = card.querySelector<HTMLElement>(".card-header");
-  if (!header) {
+function setExpanded(card: HTMLElement, expanded: boolean): void {
+  const header: HTMLElement | null =
+    card.querySelector<HTMLElement>(".card-header");
+  if (header === null) {
     return;
   }
 
@@ -10,13 +13,16 @@ function setExpanded(card: HTMLElement, expanded: boolean) {
   header.setAttribute("aria-expanded", String(expanded));
 }
 
-function expandCard(card: HTMLElement) {
-  cards.forEach((other) => setExpanded(other, other === card));
+function expandCard(card: HTMLElement): void {
+  cards.forEach((other: HTMLElement): void => {
+    setExpanded(other, other === card);
+  });
 }
 
-function toggleCard(card: HTMLElement) {
-  const header = card.querySelector<HTMLElement>(".card-header");
-  const expanded = header?.getAttribute("aria-expanded") === "true";
+function toggleCard(card: HTMLElement): void {
+  const header: HTMLElement | null =
+    card.querySelector<HTMLElement>(".card-header");
+  const expanded: boolean = header?.getAttribute("aria-expanded") === "true";
 
   if (expanded) {
     setExpanded(card, false);
@@ -25,27 +31,30 @@ function toggleCard(card: HTMLElement) {
   }
 }
 
-cards.forEach((card) => {
-  const header = card.querySelector<HTMLElement>(".card-header");
-  if (!header) {
+function isLink(target: EventTarget | null): boolean {
+  return target instanceof Element && target.closest("a") !== null;
+}
+
+cards.forEach((card: HTMLElement): void => {
+  const header: HTMLElement | null =
+    card.querySelector<HTMLElement>(".card-header");
+  if (header === null) {
     return;
   }
 
-  header.addEventListener("click", (event) => {
-    const target = event.target as HTMLElement | null;
-    if (target?.closest("a")) {
+  header.addEventListener("click", (event: MouseEvent): void => {
+    if (isLink(event.target)) {
       return;
     }
     toggleCard(card);
   });
 
-  header.addEventListener("keydown", (event) => {
+  header.addEventListener("keydown", (event: KeyboardEvent): void => {
     if (event.key !== "Enter" && event.key !== " ") {
       return;
     }
 
-    const target = event.target as HTMLElement | null;
-    if (target?.closest("a")) {
+    if (isLink(event.target)) {
       return;
     }
 
@@ -54,13 +63,14 @@ cards.forEach((card) => {
   });
 });
 
-const hash = window.location.hash.slice(1);
+const hash: string = window.location.hash.slice(1);
 
-if (hash) {
-  const target = document.getElementById(hash);
-  const card = target?.closest<HTMLElement>(".card");
+if (hash !== "") {
+  const target: HTMLElement | null = document.getElementById(hash);
+  const card: HTMLElement | null =
+    target?.closest<HTMLElement>(".card") ?? null;
 
-  if (card) {
+  if (card !== null) {
     expandCard(card);
   }
 }

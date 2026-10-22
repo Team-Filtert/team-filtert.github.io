@@ -3,7 +3,7 @@ build/
 .gocache/
 .gomodcache/
 *.wasm
-
+*_templ.go
 # Editor backup files
 *~
 

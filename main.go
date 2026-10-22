@@ -127,6 +127,7 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 	if len(updates) == 0 {
 		return errors.New("no devlogs found in content/updates")
 	}
+	templates.SetFooterUpdates(updates)
 
 	leaders, err := pick(members, "wolfy", "lukas", "komi", "firearchers", "riko", "admiralensin")
 	if err != nil {
@@ -144,7 +145,10 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 	creditGroups, assetsByMember, credited := buildCreditGroups(people, allAssets)
 	creditTags := assetLibrary.Tags()
 
-	latest := updates[0]
+	recent := updates
+	if len(recent) > 3 {
+		recent = recent[:3]
+	}
 
 	root := ssg.Node{
 		Title: "Neuro-sama: The Good, The Evil And The Filtered",
@@ -155,7 +159,7 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 		// change. The style and scripts directories have their own nodes below.
 		DependsOn: []string{"content/members", "content/updates", "public"},
 		Page: func(c ssg.Ctx) templ.Component {
-			return pages.Home(c, latest, leaders)
+			return pages.Home(c, recent, leaders)
 		},
 		Children: map[string]ssg.Node{
 			"about": {

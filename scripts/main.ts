@@ -1,18 +1,20 @@
-const text = "A Neuro-sama fan game presented by Team Filtered";
-const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const typing = document.getElementById("typing");
+const text: string = "A Neuro-sama fan game presented by Team Filtered";
+const reduceMotion: boolean = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+).matches;
+const typing: HTMLElement | null = document.getElementById("typing");
 
-if (typing) {
+if (typing !== null) {
   if (reduceMotion) {
     typing.textContent = text;
   } else {
-    let i = 0;
+    let i: number = 0;
 
-    const type = () => {
+    const type: () => void = (): void => {
       if (i < text.length) {
         typing.textContent += text[i];
-        i++;
-        setTimeout(type, 40);
+        i += 1;
+        window.setTimeout(type, 40);
       }
     };
 
@@ -20,13 +22,13 @@ if (typing) {
   }
 }
 
-const stars = document.getElementById("stars");
+const stars: HTMLElement | null = document.getElementById("stars");
 
-if (stars && !reduceMotion) {
-  for (let i = 0; i < 200; i++) {
-    const star = document.createElement("div");
-    const middle = document.createElement("div");
-    const inner = document.createElement("div");
+if (stars !== null && !reduceMotion) {
+  for (let i: number = 0; i < 200; i += 1) {
+    const star: HTMLDivElement = document.createElement("div");
+    const middle: HTMLDivElement = document.createElement("div");
+    const inner: HTMLDivElement = document.createElement("div");
     star.classList.add("star");
     middle.classList.add("star-middle");
     inner.classList.add("star-inner");
@@ -40,7 +42,7 @@ if (stars && !reduceMotion) {
     inner.style.left = Math.random() * 100 + "vw";
     inner.style.top = Math.random() * 100 + "vh";
 
-    const size = Math.random() * 3 + 1;
+    const size: number = Math.random() * 3 + 1;
 
     inner.style.width = size + "px";
     inner.style.height = size + "px";

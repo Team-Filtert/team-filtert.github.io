@@ -90,6 +90,12 @@
 }
 
 
+.patch {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
 .patch .card-link,
 .patch .card-base,
 .patch .post-card{

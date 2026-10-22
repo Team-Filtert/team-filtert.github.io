@@ -36,17 +36,31 @@ templ Footer(c ssg.Ctx) {
 					<ul>
 						<li><a href={ c.Link("team/") + "#member-wolfy" }>CountWolfy</a></li>
 						<li><a href={ c.Link("team/") + "#member-lukas" }>Lukas</a></li>
-						<li><a href={ c.Link("team/") + "#member-anzeal" }>Anzeal</a></li>
+						<li><a href={ c.Link("team/") + "#member-riko" }>Riko</a></li>
 						<li><a href={ c.Link("team/") + "#member-admiralensin" }>AdmiralEnsin</a></li>
 						<li><a href={ c.Link("team/") + "#member-komi" }>Komikron</a></li>
 						<li><a href={ c.Link("team/") + "#member-firearchers" }>Firearchers</a></li>
 					</ul>
 				</div>
-				<div>
+				<div class="footer-updates">
 					<a href={ c.Link("updates/") }>Updates Blog</a>
+					<ul>
+						for _, update := range footerUpdates {
+							<li>
+								<a href={ c.Link("updates/" + update.Slug + "/") }>{ update.Title }</a>
+							</li>
+						}
+					</ul>
 				</div>
 				<div>
 					<a href={ c.Link("credits/") }>Credits</a>
+					<ul>
+						for _, tag := range Assets().Tags() {
+							<li>
+								<a href={ c.Link("credits/") + "#" + tag }>{ tag }</a>
+							</li>
+						}
+					</ul>
 				</div>
 			</div>
 			<p class="footer-copyright">
@@ -97,8 +111,13 @@ templ FooterStyles() {
 			text-decoration: none;
 		}
 
+		.footer-divider li,
 		.footer-divider li a {
 			color: white;
+		}
+
+		.footer-divider li a:hover {
+			text-decoration: underline;
 		}
 
 		.footer-divider > div > a {
@@ -109,6 +128,9 @@ templ FooterStyles() {
 
 		.footer-divider > * {
 			padding: 0 2rem;
+		}
+		.footer-updates {
+			max-width: 22rem;
 		}
 		.footer-copyright {
 			display: flex;

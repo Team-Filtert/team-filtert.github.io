@@ -1,6 +1,6 @@
 +++
 title = "Devlog #6: Yet another rewrite..."
-summary = "I did a nother rewrite. We made progress on the actuall game."
+summary = "I did another rewrite. We made progress on the actuall game."
 author = ["lukas"]
 published = "draft"
 +++
@@ -9,7 +9,7 @@ published = "draft"
 
 Yes, I know. Another rewrite. This time it's the website, not the game.
 
-The site has been running on [Astro](https://astro.build) since Devlog #2, and that was a big step up from the original setup. But it still meant keeping a whole Node toolchain around to build a mostly static site, and every small change went through pnpm and a pile of dependencies.
+The site has been running on [Astro](https://astro.build) since [Devlog #2](/updates/second-update/), and that was a big step up from the original setup. But it still meant keeping a whole Node toolchain around to build a mostly static site, and every small change went through pnpm and a pile of dependencies.
 
 So the site is now built with [astwerk](https://github.com/LukasDerBaum42/astwerk), my own static site generator written in Go. Pages are Go and templ components, devlogs and bios are still Markdown with TOML front matter, and `go run .` builds the whole thing. Astro and pnpm are gone. The few interactive bits are still TypeScript, because I'm not rewriting the starfield in Go again (yes, I did do that for my own website, and it's a bad idea).
 
@@ -21,6 +21,11 @@ The content didn't change, but a few things got nicer along the way:
 - The dev server only rebuilds the pages a change actually affects, which makes writing these posts a lot faster.
 
 Deployment is still GitHub Pages, so nothing changes on your end. It just takes one fewer toolchain to get there.
+
+## The Game progress
+
+We have made huge progress with the combat system, after porting most of the old system to the new codebase.
+Yes in the end the rewrite the the game wasn't the best idea but we're getting close to something where we can actually so something off.
 
 ## Astwerk
 
@@ -50,5 +55,3 @@ There are also some other cool features planned, some of which will live in thei
 - A preprocessor similar to Svelte, for reactive components written in Go
 
 </details>
-
-<br>

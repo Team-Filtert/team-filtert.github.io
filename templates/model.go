@@ -29,6 +29,19 @@ type Update struct {
 	Published time.Time
 }
 
+// footerUpdates holds the newest devlogs for the footer. It is installed once
+// before Build, like the asset library.
+var footerUpdates []Update
+
+// SetFooterUpdates installs the newest updates for the footer. loadUpdates
+// sorts them newest first, so the first three are the ones to show.
+func SetFooterUpdates(updates []Update) {
+	footerUpdates = updates
+	if len(footerUpdates) > 3 {
+		footerUpdates = footerUpdates[:3]
+	}
+}
+
 // leaderLabel keeps the shorter names the home page has always used for two
 // of the leaders. The anchor still uses the member's slug.
 func leaderLabel(m Member) string {

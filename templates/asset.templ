@@ -66,6 +66,13 @@ templ assetCard(c ssg.Ctx, asset AssetEntry, showLicense bool) {
 		if showLicense && asset.License != "" {
 			<p class="license">License: { asset.License }</p>
 		}
+		if showLicense && len(asset.Tags) > 0 {
+			<p class="asset-tags">
+				for _, tag := range asset.Tags {
+					<span class="asset-tag">{ tag }</span>
+				}
+			</p>
+		}
 	</div>
 }
 
