@@ -23,18 +23,18 @@
 }
 
 .b_card {
-    padding: 1rem;
+    padding: 0.5rem;
     background: rgba(255, 255, 255, 0.05);
     border: 1px solid white;
     transition: 0.3s;
-    max-width: 15rem;
+    max-width: 20rem;
 }
 
-.card_h {
+/*.card_h {
     display: flex;
     align-items: center;
     gap: 0.85rem;
-}
+}*/
 
 .art-credit {
     margin: 0.5rem 0 0;
@@ -101,7 +101,7 @@
   border: 1px solid white;
 }
 
-
+.card_h,
 .card.expanded .card-header {
     display: flex;
     height: 7rem;
@@ -121,11 +121,20 @@
       width 0.3s 6.5rem,
       height 0.3s 6.5rem;
 }
+
+.card_h .card-titles h3 {
+    margin: 0 0 0.2rem;
+    font-size: 1.5rem;
+}
+
+
 .card.expanded .card-titles h3 {
   margin: 0 0 0.2rem;
   font-size: 2rem;
   transition: 0.3s;
 }
+
+.card_h .card-titles p,
 .card.expanded .card-titles p {
     margin: 0;
     font-size: 1.1rem;

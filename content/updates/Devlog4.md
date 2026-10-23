@@ -1,7 +1,7 @@
 +++
 title = "Devlog #4: Our First Dev Talk"
 summary = "We have YouTube, and our first Dev Talk"
-author = ["lukas"]
+author = ["LukasDerBaum"]
 published = 2026-08-20
 +++
 

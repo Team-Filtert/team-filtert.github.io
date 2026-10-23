@@ -1,7 +1,7 @@
 +++
 title = "Devlog #6: Yet another rewrite..."
 summary = "I did another rewrite. We made progress on the actuall game."
-author = ["lukas"]
+author = ["LukasDerBaum"]
 published = "draft"
 +++
 

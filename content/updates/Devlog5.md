@@ -1,7 +1,7 @@
 +++
 title = "Devlog #5: We're pretty busy"
 summary = "We are all pretty busy with life, but we are working hard on our projects, so here is some concept art"
-author = ["lukas"]
+author = ["LukasDerBaum"]
 published = 2026-10-01
 +++
 

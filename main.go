@@ -120,23 +120,33 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 	templates.SetAssetLibrary(assetLibrary)
 	log.Printf("loaded %d assets", len(assetLibrary.All()))
 
-	updates, err := loadUpdates(members, includeDrafts)
+	updates, err := loadUpdates(includeDrafts)
 	if err != nil {
 		return err
 	}
 	if len(updates) == 0 {
 		return errors.New("no devlogs found in content/updates")
 	}
-	templates.SetFooterUpdates(updates)
+
+	recent := updates
+	if len(recent) > 3 {
+		recent = recent[:3]
+	}
+	templates.SetFooterUpdates(recent)
 
 	leaders, err := pick(members, "wolfy", "lukas", "komi", "firearchers", "riko", "admiralensin")
 	if err != nil {
 		return err
 	}
-	heads, err := pick(members, "wolfy", "lukas", "komi", "firearchers", "riko", "admiralensin")
+	characters, err := loadCharacters()
 	if err != nil {
 		return err
 	}
+	chaps, err := loadChapters()
+	if err != nil {
+		return err
+	}
+
 	groups := teamGroups(members)
 
 	team := sortedMembers(members)
@@ -145,10 +155,7 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 	creditGroups, assetsByMember, credited := buildCreditGroups(people, allAssets)
 	creditTags := assetLibrary.Tags()
 
-	recent := updates
-	if len(recent) > 3 {
-		recent = recent[:3]
-	}
+	pages.Chars = characters
 
 	root := ssg.Node{
 		Title: "Neuro-sama: The Good, The Evil And The Filtered",
@@ -163,13 +170,14 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 		},
 		Children: map[string]ssg.Node{
 			"about": {
-				Title: "About the game",
-				Page:  func(c ssg.Ctx) templ.Component { return pages.About(c) },
+				Title:     "About the game",
+				DependsOn: []string{"content/character.json", "content/chapters"},
+				Page:      func(c ssg.Ctx) templ.Component { return pages.About(c, chaps) },
 			},
 			"team": {
 				Title:     "The Team",
 				DependsOn: []string{"content/members"},
-				Page:      func(c ssg.Ctx) templ.Component { return pages.Team(c, heads, groups) },
+				Page:      func(c ssg.Ctx) templ.Component { return pages.Team(c, leaders, groups) },
 			},
 			"contact": {
 				Title: "Contact",
@@ -198,7 +206,7 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 			},
 			"updates": {
 				Title:     "Updates",
-				DependsOn: []string{"content/updates", "content/members"},
+				DependsOn: []string{"content/updates", "public"},
 				Page:      func(c ssg.Ctx) templ.Component { return pages.Updates(c, updates) },
 				Generate: func() map[string]ssg.Node {
 					children := make(map[string]ssg.Node, len(updates))
@@ -206,7 +214,7 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 						u := u
 						children[u.Slug] = ssg.Node{
 							Title:     u.Title,
-							DependsOn: []string{"content/updates", "content/members"},
+							DependsOn: []string{"content/updates", "public"},
 							Page:      func(c ssg.Ctx) templ.Component { return pages.UpdateDetail(c, u) },
 						}
 					}

@@ -1,7 +1,7 @@
 +++
 title = "Devlog #3: State of the demo"
 summary = "An update on our progress towards releasing the demo (chapter 1)"
-author = ["lukas", "firearchers", "wolfy", "gab"]
+author = ["LukasDerBaum", "Firearchers", "CountWolfy", "Gab"]
 published = 2026-07-08
 +++
 

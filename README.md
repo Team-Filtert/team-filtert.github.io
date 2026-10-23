@@ -80,7 +80,7 @@ Markdown body.
 ```
 
 `published = "draft"` hides the post unless the build is run with `-drafts`.
-Author values are member slugs from `content/members/`.
+Author values are display names, for example `author = ["LukasDerBaum", "KTrain"]`.
 
 Devlog bodies may also call templ components. `siteLoader` in `load.go`
 registers two:

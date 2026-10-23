@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"sort"
 	"strings"
 
@@ -86,16 +87,12 @@ func loadAssets(members map[string]templates.Member) (templates.AssetLibrary, er
 }
 
 func normalizeTags(tags []string) []string {
-	seen := make(map[string]bool, len(tags))
 	out := make([]string, 0, len(tags))
 	for _, tag := range tags {
-		tag = strings.TrimSpace(tag)
-		if tag == "" || seen[tag] {
-			continue
+		if tag = strings.TrimSpace(tag); tag != "" {
+			out = append(out, tag)
 		}
-		seen[tag] = true
-		out = append(out, tag)
 	}
 	sort.Strings(out)
-	return out
+	return slices.Compact(out)
 }

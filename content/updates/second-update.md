@@ -1,7 +1,7 @@
 +++
 title = "Devlog #2: Rewrite"
 summary = "...yeah we're already rewriting this"
-author = ["ktrain"]
+author = ["KTrain"]
 published = 2026-06-20
 +++
 

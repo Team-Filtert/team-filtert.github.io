@@ -29,17 +29,24 @@ type Update struct {
 	Published time.Time
 }
 
+// Character is one entry in content/character.json. The map key is the
+// character's name, so loadCharacters fills Name in.
+type Character struct {
+	Name        string `json:"-"`
+	Roll        string `json:"roll"`
+	Description string `json:"Description"`
+	Pfp         string `json:"pfp"`
+	Hiden       bool   `json:"Hiden"`
+}
+
 // footerUpdates holds the newest devlogs for the footer. It is installed once
 // before Build, like the asset library.
 var footerUpdates []Update
 
-// SetFooterUpdates installs the newest updates for the footer. loadUpdates
-// sorts them newest first, so the first three are the ones to show.
+// SetFooterUpdates installs the updates shown in the footer. The caller
+// decides how many to pass.
 func SetFooterUpdates(updates []Update) {
 	footerUpdates = updates
-	if len(footerUpdates) > 3 {
-		footerUpdates = footerUpdates[:3]
-	}
 }
 
 // leaderLabel keeps the shorter names the home page has always used for two

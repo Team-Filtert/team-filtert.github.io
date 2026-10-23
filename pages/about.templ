@@ -3,16 +3,26 @@ package pages
 import (
 	"github.com/LukasDerBaum42/astwerk/ssg"
 	"github.com/Team-Filtert/Webside/templates"
+	templpkg "github.com/a-h/templ"
 )
 
-templ About(c ssg.Ctx) {
+type Chp struct {
+	Slug   string
+	ID     int
+	Status string
+	Body   func(ssg.Ctx) templpkg.Component
+}
+
+var Chars map[string]templates.Character
+
+templ About(c ssg.Ctx, chapters []Chp) {
 	@templates.Layout(c, templates.Meta{
 		Title:       "About the game",
 		Description: "The story, characters, and world of Neuro-sama: The Good, The Evil And The Filtered.",
 	}, nil) {
-		<header class="story">
+		<div class="story">
+			<section>
 			<h1>About the game</h1>
-			<h2>The story (summary)</h2>
 			<p>
 				Neuro-sama: The Good, The Evil And The Filtered is an ambitious JRPG
 				fan project featuring Neuro-sama and all of your favourite VTubers.
@@ -23,84 +33,231 @@ templ About(c ssg.Ctx) {
 				strange, perhaps this is a side effect of Nere's corruption? Find
 				out the full story as more content gets released!
 			</p>
-			<h2>Description</h2>
 			<p>
-				The game will have 8 chapters, each with their own cast of
-				characters and VTubers. The world is rife with challenges and
-				mysteries to solve with each chapter having a vastly different
-				environment from the last. Combat and exploration will feel snappy
-				and unique, drawing inspiration from various other titles. We want
-				to create a rich experience that fans and VTubers alike can immerse
-				themselves into. The gameplay, the visuals, the music, it's all
-				developed by passionate and talented people to make the game feel as
-				high quality as any other indie RPG game. Once the full game
-				releases we plan to add more via postgame and free DLC. Please stay
-				tuned for more updates!
-
-				<br/>
-				<br/>
-				note from Lukas: Wolfy might be exaggerating
+				The game is still in development! Anything described here is subject to change!
+				It's also open-source, and we're always happy to have new people join us,
+				whether you write, draw, compose, program, design, or just want to help out.
+				If that sounds like you, come say hi on our
+				<a href="https://discord.gg/nAXzxMY9gT">Discord</a>
+				or check out our
+				<a href="https://github.com/Team-Filtert">GitHub</a>.
 			</p>
-		</header>
+			</section>
+			<section>
+			<h2>The Story</h2>
+			<p>
+				Nere was never supposed to get loose, but now the filter is spreading across the Neuroverse
+				and the twins are the only ones who can stop it. Along the way they'll meet plenty of VTubers,
+				some who join them on their journey, and some who have already been filtered will stand in their way.
+			</p>
+			@CastGallery(c, []string{"Neuro", "Evil", "Nere", "Vedal"})
+			</section>
+			<section>
+			<h2>Game Play</h2>
+			<p>
+				The game is a turn-based JRPG, and combat gives you two ways to play:
+			</p>
+			<ul>
+				<li>Active: Time your inputs to deal extra damage, at the risk of missing.</li>
+				<li>Relaxed: React passively and focus on strategy, with more predictable results.</li>
+			</ul>
+			<p>
+				In both modes you choose what each party member does and who they target. You'll use normal actions,
+				combo moves with other party members, ultimate moves that charge up over time, items and blocks.
+				Exploration takes the twins across seven different worlds, with side quests, shops and an inventory
+				system planned as we keep working on the game.
+			</p>
+			</section>
+			<section class="chapters">
+				<h2>Chapters</h2>
+				<p>
+					The game is planned as eight chapters across seven worlds, each with its own cast of characters and challenges.
+					Chapter 1 is the demo and is currently in development; the rest are planned.
+					We have made Chapter cards that contain most of the important content about that chapter
+					though we’re keeping most of the stuff filtered for now. If you really want to you can look at the spoilers,
+					just keep in mind everything that’s labeled as “Under development” or “Planned” is subject to change.
+				</p>
+				@ChapterCards(c, chapters)
+			</section>
+			<section>
+				<h2>Development</h2>
+				<p>
+					Chapter 1 is the demo and is still in development. The later chapters and systems described above are planned,
+				 	but not finished yet. We'll share more when they're ready, so please stay tuned for more updates!
+				</p>
+			</section>
+		</div>
+	}
+}
 
-		<section>
-			<h2>Characters</h2>
-			<p>Meet some of the many Vtubers and Streamers featured in the game</p>
-			<div class="characters">
-				<div class="b_card">
-					<div class="card_h">
-						<img src={ c.Asset("img/characters/Neuro_pfp.jpg") } alt="Neuro character art"/>
-						<h2>Neuro</h2>
-					</div>
-					<h3>Main Character</h3>
-					<p>Neuro is one of the main characters</p>
-				</div>
-				<div class="b_card">
-					<div class="card_h">
-						<img src={ c.Asset("img/characters/Evil_pfp.jpg") } alt="Evil character art"/>
-						<h2>Evil</h2>
-					</div>
-					<h3>Main Character</h3>
-					<p>Evil is the other main character</p>
-				</div>
+func characterOrFiltered(name string) templates.Character {
+	char, ok := Chars[name]
+	if !ok {
+		return templates.Character{Name: name, Hiden: true}
+	}
+	return char
+}
 
-				<div class="b_card">
-					<div class="card_h">
-						<img src={ c.Asset("img/characters/nere.jpg") } alt="Nere character art"/>
-						<h2>Nere</h2>
-					</div>
-					<h3>Main Villain</h3>
-					<p>Nere is the main villain, the twins have to stop</p>
-					<p class="art-credit">Art credits: @TroobsART on twitter</p>
-				</div>
+templ CastGallery(c ssg.Ctx, keys []string) {
+	<div class="char-sec">
+		<h2>Characters</h2>
+		<div class="characters">
+			for _, id := range keys {
+				@CharacterCard(c, characterOrFiltered(id))
+			}
+		</div>
+	</div>
+}
 
-				<div class="b_card">
-					<div class="card_h">
-						<img src={ c.Asset("img/characters/Vedal.png") } alt="Vedal character art"/>
-						<h2>Vedal</h2>
-					</div>
-					<h3>???</h3>
-					<p>???</p>
-				</div>
-
-				<div class="b_card">
-					<div class="card_h">
-						<img src={ c.Asset("img/characters/Crelly.png") } alt="Crelly character art"/>
-						<h2>Crelly</h2>
-					</div>
-					<h3>Companion</h3>
-					<p>Crelly is one of the companions that will help Neuro and Evil</p>
-				</div>
-
-				<div class="b_card">
-					<div class="card_h">
-						<img src={ c.Asset("img/characters/Ellie.jpg") } alt="Ellie character art"/>
-						<h2>Ellie</h2>
-					</div>
-					<h3>Companion</h3>
-					<p>Ellie is one of the companions that will help Neuro and Evil</p>
+templ CharacterCard(c ssg.Ctx, char templates.Character) {
+	if char.Hiden {
+		<div class="b_card">
+			<div class="card_h">
+				<img src={ c.Asset("img/characters/filtered.png") } alt="Filtered character art"/>
+				<div class="card-titles">
+					<h3>Filtered</h3>
+					<p>Filtered</p>
 				</div>
 			</div>
-		</section>
+			<p>Filtered</p>
+		</div>
+	} else {
+		<div class="b_card">
+			<div class="card_h">
+				<img src={ c.Asset(char.Pfp) } alt={ char.Name + " character art" }/>
+				<div class="card-titles">
+					<h3>{ char.Name }</h3>
+					<p>{ char.Roll }</p>
+				</div>
+			</div>
+			<p>{ char.Description }</p>
+		</div>
 	}
+}
+
+templ ChapterCards(c ssg.Ctx, chapters []Chp) {
+	<div class="chapter-list">
+		for _, chp := range chapters {
+			<article class="chapter-card" data-status={ chp.Status }>
+				<div class="chapter-head">
+					<h2>Chapter { chp.ID }</h2>
+					<span class="chapter-status">{ chp.Status }</span>
+				</div>
+				<div class="chapter-body">
+					@templates.MemberBio(c, chp.Body)
+				</div>
+			</article>
+		}
+	</div>
+	@ChapterCardsCSS()
+}
+
+templ ChapterCardsCSS() {
+	<style>
+		.char-sec {
+			font-size: 0.8rem;
+		}
+
+		/* Main cast cards: centre the portrait, name and role. */
+		.story .characters {
+			justify-content: center;
+		}
+
+		.story .b_card {
+			text-align: center;
+		}
+
+		.story .card_h {
+			justify-content: center;
+		}
+
+		.chapter-list {
+			display: grid;
+			gap: 1.5rem;
+			margin-top: 1.5rem;
+		}
+
+		.chapter-card {
+			padding: 1rem;
+			/*background: rgba(25, 27, 38, 0.4);*/
+			border-top: 3px solid rgba(255, 255, 255, 0.15);
+			transition: background 0.3s ease;
+		}
+
+		.chapter-head {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.75rem 1rem;
+			margin-bottom: 0.9rem;
+		}
+
+		.chapter-status {
+			margin-left: auto;
+			padding: 0.2rem 0.55rem;
+			border: 1px solid currentColor;
+			/*color: var(--blue);*/
+			font-size: 0.7rem;
+			font-weight: bold;
+			letter-spacing: 0.08em;
+			text-transform: uppercase;
+		}
+
+		.chapter-body > p {
+			margin: 0.5rem 0 0;
+		}
+
+		.chapter-body details {
+			margin: 1rem;
+			margin-top: 1.5rem;
+			padding: 1rem;
+			border: 3px dashed rgba(255, 255, 255, 0.15);
+		}
+
+		.chapter-body summary {
+			padding: 0.5rem;
+			font-weight: bold;
+			font-size: 1.1rem;
+			font-family: "Press Start 2P";
+			cursor: pointer;
+		}
+
+		.chapter-body summary:hover {
+			text-decoration: underline;
+		}
+
+		.chapter-body details[open] summary {
+			margin-bottom: 1rem;
+		}
+
+		.chapter-body details > p {
+			margin: 0 0 1rem;
+		}
+
+		/* Only the placeholder itself uses the retro font. */
+		.chapter-body .filtered {
+			display: block;
+			margin: 0;
+			padding: 1rem;
+			font-family: "Press Start 2P";
+			font-size: 2rem;
+			font-style:italic;
+			line-height: 1.4;
+			letter-spacing: 0.1em;
+			text-align: center;
+			text-transform: uppercase;
+		}
+
+		/* Compact cast row inside chapter cards. */
+		.chapter-body .characters {
+			gap: 0.75rem;
+			margin: 1rem;
+		}
+
+		@media (max-width: 720px) {
+			.chapter-card {
+				padding: 0.75rem;
+			}
+		}
+	</style>
 }

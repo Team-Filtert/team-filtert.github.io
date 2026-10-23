@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 	"time"
@@ -24,6 +26,11 @@ type updateFrontMatter struct {
 	Summary   string   `toml:"summary"`
 	Author    []string `toml:"author"`
 	Published any      `toml:"published"`
+}
+
+type ChapterFrontMatter struct {
+	ID     int    `toml:"chapter"`
+	Status string `toml:"status"`
 }
 
 // department is one section on the team page. The order here is the order the
@@ -51,7 +58,28 @@ func newSiteLoader() *content.Loader {
 	components := content.NewComponents()
 	content.Register(components, "asset", templates.Asset)
 	content.Register(components, "gallery", templates.Gallery)
+	content.Register(components, "castgallery", pages.CastGallery)
 	return content.NewLoader(nil).WithComponents(components)
+}
+
+// loadCharacters reads content/character.json into a map keyed by character
+// name. astwerk has no single-file JSON loader, so this is plain encoding/json.
+func loadCharacters() (map[string]templates.Character, error) {
+	data, err := os.ReadFile("content/character.json")
+	if err != nil {
+		return nil, fmt.Errorf("reading content/character.json: %w", err)
+	}
+
+	var characters map[string]templates.Character
+	if err := json.Unmarshal(data, &characters); err != nil {
+		return nil, fmt.Errorf("decoding content/character.json: %w", err)
+	}
+
+	for name, character := range characters {
+		character.Name = name
+		characters[name] = character
+	}
+	return characters, nil
 }
 
 func loadMembers() (map[string]templates.Member, error) {
@@ -79,7 +107,32 @@ func loadMembers() (map[string]templates.Member, error) {
 	return members, nil
 }
 
-func loadUpdates(members map[string]templates.Member, includeDrafts bool) ([]templates.Update, error) {
+func loadChapters() ([]pages.Chp, error) {
+	collection, err := content.LoadCollectionWith[ChapterFrontMatter](siteLoader, "content/chapters")
+	if err != nil {
+		return nil, fmt.Errorf("reading content/chapters: %w", err)
+	}
+
+	chapters := make([]pages.Chp, 0, len(collection.Items))
+	for _, item := range collection.Items {
+		fm := item.Meta
+		if fm.ID == 0 {
+			return nil, fmt.Errorf("content/chapters/%s.md has no chapter number", item.Slug)
+		}
+
+		chapters = append(chapters, pages.Chp{
+			Slug:   item.Slug,
+			ID:     fm.ID,
+			Status: fm.Status,
+			Body:   item.Content,
+		})
+	}
+
+	sort.Slice(chapters, func(i, j int) bool { return chapters[i].ID < chapters[j].ID })
+	return chapters, nil
+}
+
+func loadUpdates(includeDrafts bool) ([]templates.Update, error) {
 	collection, err := content.LoadCollectionWith[updateFrontMatter](siteLoader, "content/updates")
 	if err != nil {
 		return nil, fmt.Errorf("reading content/updates: %w", err)
@@ -104,7 +157,7 @@ func loadUpdates(members map[string]templates.Member, includeDrafts bool) ([]tem
 			Slug:      item.Slug,
 			Title:     fm.Title,
 			Summary:   fm.Summary,
-			Authors:   authorNames(fm.Author, members),
+			Authors:   strings.Join(fm.Author, ", "),
 			Body:      item.Content,
 			Published: published,
 		}
@@ -146,18 +199,6 @@ func publishedDate(v any) (time.Time, bool, error) {
 	}
 }
 
-func authorNames(slugs []string, members map[string]templates.Member) string {
-	names := make([]string, 0, len(slugs))
-	for _, slug := range slugs {
-		if m, ok := members[slug]; ok {
-			names = append(names, m.Name)
-		} else {
-			names = append(names, slug)
-		}
-	}
-	return strings.Join(names, ", ")
-}
-
 // pick returns the named members in the given order, failing loudly on a typo
 // rather than rendering a missing card.
 func pick(members map[string]templates.Member, slugs ...string) ([]templates.Member, error) {
@@ -170,6 +211,20 @@ func pick(members map[string]templates.Member, slugs ...string) ([]templates.Mem
 		out = append(out, m)
 	}
 	return out, nil
+}
+
+func sortedMembers(members map[string]templates.Member) []templates.Member {
+	slugs := make([]string, 0, len(members))
+	for slug := range members {
+		slugs = append(slugs, slug)
+	}
+	sort.Strings(slugs)
+
+	out := make([]templates.Member, 0, len(slugs))
+	for _, slug := range slugs {
+		out = append(out, members[slug])
+	}
+	return out
 }
 
 func teamGroups(members map[string]templates.Member) []pages.TeamGroup {
@@ -252,18 +307,4 @@ func buildCreditGroups(people []templates.Member, assets []templates.AssetEntry)
 	}
 
 	return groups, byMember, credited
-}
-
-func sortedMembers(members map[string]templates.Member) []templates.Member {
-	slugs := make([]string, 0, len(members))
-	for slug := range members {
-		slugs = append(slugs, slug)
-	}
-	sort.Strings(slugs)
-
-	out := make([]templates.Member, 0, len(slugs))
-	for _, slug := range slugs {
-		out = append(out, members[slug])
-	}
-	return out
 }
