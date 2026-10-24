@@ -3,7 +3,7 @@ package templates
 import "github.com/LukasDerBaum42/astwerk/ssg"
 
 templ Nav(c ssg.Ctx) {
-	<nav>
+	<nav aria-label="Main navigation">
 		<a href={ c.Link("") }>
 			<img
 				class="team-logo"

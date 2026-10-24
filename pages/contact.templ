@@ -30,7 +30,6 @@ templ Contact(c ssg.Ctx) {
 						<img src={ c.Asset("assets/logos/twitter.svg") } alt="Twitter logo"/>
 						<span>Twitter</span>
 					</h3>
-
 					<a href="https://x.com/@Teamfilteredf" target="_blank" rel="noopener noreferrer">Team Filtered</a>
 					<a href="https://x.com/CountWolfy" target="_blank" rel="noopener noreferrer">CountWolfy</a>
 					<a href="https://x.com/@DerbaumLuk37729" target="_blank" rel="noopener noreferrer">Lukas DerBaum</a>
@@ -48,7 +47,6 @@ templ Contact(c ssg.Ctx) {
 						/>
 						<span>Discord</span>
 					</h3>
-
 					<a href="https://discord.gg/nAXzxMY9gT" target="_blank" rel="noopener noreferrer">Our Discord server</a>
 					<a href="https://discord.com/invite/TzMX6mgHNP" target="_blank" rel="noopener noreferrer">The Swarm Scribes</a>
 				</div>
@@ -60,7 +58,6 @@ templ Contact(c ssg.Ctx) {
 						/>
 						<span>GitHub</span>
 					</h3>
-
 					<a href="https://github.com/Team-Filtert" target="_blank" rel="noopener noreferrer">Our GitHub Org</a>
 					<a href="https://github.com/Team-Filtert/Webside" target="_blank" rel="noopener noreferrer">This Website</a>
 					<a href="https://github.com/KTrain5169" target="_blank" rel="noopener noreferrer">KTrain</a>
@@ -71,7 +68,6 @@ templ Contact(c ssg.Ctx) {
 						<img src={ c.Asset("assets/logos/email.svg") } alt="Email logo"/>
 						<span>Email</span>
 					</h3>
-
 					<p>teamfilteredo7@gmail.com</p>
 				</div>
 			</div>
@@ -81,144 +77,89 @@ templ Contact(c ssg.Ctx) {
 
 templ contactStyles() {
 	<style>
-		.contact-info {
+			.contact-info {
+				display: grid;
+				grid-template-columns: repeat(
+					auto-fit,
+					minmax(min(100%, 17rem), 1fr)
+				);
+				align-items: start;
+				gap: 1.25rem;
+				margin-top: 1.75rem;
+			}
+
+			.contact-info > div {
 				display: flex;
-				flex-wrap: wrap;
-				gap: 2.5rem;
-				align-items: center;
+				flex-direction: column;
+				gap: 0.55rem;
+				padding: 1.25rem;
+				background: var(--surface);
+				border: 1px solid var(--border-strong);
+				transition:
+					transform 0.2s ease,
+					border-color 0.2s ease;
+			}
+
+			.contact-info > div:hover {
+				transform: translateY(-3px);
+				border-color: var(--green);
 			}
 
 			.contact-info h3 {
 				display: flex;
-				text-align: center;
 				align-items: center;
-				margin-left: auto;
-				margin-right: auto;
-				gap: 1rem;
-				opacity: 1;
+				justify-content: center;
+				gap: 0.65rem;
+				margin: 0 0 0.5rem;
+				font-size: 1.2rem;
+				text-align: center;
 			}
 
 			.contact-info img {
-				width: 2rem;
-				height: 2rem;
-				object-fit: contain;
 				display: block;
-				filter: invert(1);
-				opacity: 1;
+				width: 1.5rem;
+				height: 1.5rem;
+				object-fit: contain;
+				filter: invert(1) opacity(0.9);
 			}
 
-			.contact-info div {
-				background: rgba(25, 27, 38, 0.4);
-				max-width: 50%;
-				margin-left: auto;
-				margin-right: auto;
-				min-width: 30%;
-				display: grid;
-				gap: 0.7rem;
-				padding: 0.5rem;
-				border-radius: 1rem;
-				grid-template-columns: repeat(auto-fit);
-				align-items: center;
-				transition: background 0.3s ease, box-shadow 0.3s ease;
-			}
-
-			.contact-info div:hover {
-				transition: background 0.3s ease, box-shadow 0.3s ease;
-				background: rgba(25, 27, 38, 1);
-				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
+			.contact-info a,
+			.contact-info p {
+				display: block;
+				max-height: none;
+				margin: 0;
+				padding: 0.65rem 0.85rem;
+				background: var(--bg-deep);
+				border: 1px solid var(--border);
+				color: var(--text);
+				font-size: 0.9rem;
+				font-weight: 500;
+				text-align: center;
+				text-decoration: none;
+				transition:
+					transform 0.2s ease,
+					background 0.2s ease,
+					border-color 0.2s ease;
 			}
 
 			.contact-info a {
-				color: #eee;
-				padding: 0.3rem;
-				max-height: 1.6rem;
-				margin-left: 0.5rem;
-				margin-right: 0.5rem;
-				font-weight: bold;
-				text-align: center;
-				text-decoration: none;
-				border-radius: 1rem;
-				box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
-				opacity: 1;
-				transition:
-					transform 0.2s ease,
-					box-shadow 0.2s ease,
-					color 0.2s ease;
-			}
-
-			.contact-info p {
-				color: #eee;
-				padding: 0.3rem;
-				max-height: 1.6rem;
-				margin-left: 0.5rem;
-				margin-right: 0.5rem;
-				font-weight: bold;
-				text-align: center;
-				text-decoration: none;
-				border-radius: 1rem;
-				opacity: 1;
+				box-shadow: inset 3px 0 0 var(--green);
 			}
 
 			.contact-info a:hover {
-				color: #ddd;
-				padding: 0.3rem;
-				max-height: 1.6rem;
-				transform: translateY(-0.1rem);
-				box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-				transition:
-					transform 0.2s ease,
-					box-shadow 0.2s ease,
-					color 0.2s ease;
+				transform: translateX(3px);
+				background: var(--surface-raised);
+				border-color: var(--green);
+				color: var(--text);
 			}
 
-			.Youtube-links a {
-				background: #ff0000;
-			}
-
-			.Youtube-links a:hover {
-				background: #d01010;
-			}
-
-			.Twitter-links a {
-				background: #1da1f2;
-			}
-
-			.Twitter-links a:hover {
-				background: #2db1d2;
-			}
-
-			.discord-links a {
-				background: #7289d7;
-			}
-
-			.discord-links a:hover {
-				background: #8299f7;
-			}
-
-			.github-links a {
-				background: #333333;
-			}
-
-			.github-links a:hover {
-				background: #666666;
-			}
-
-			.itchio-links a {
-				background: #fa5c5c;
-			}
-
-			.itchio-links a:hover {
-				background: #da6c6c;
+			.contact-info p {
+				color: var(--muted);
 			}
 
 			@media (max-width: 720px) {
 				.contact-info {
-					gap: 1rem;
-				}
-
-				.contact-info div {
-					max-width: 100%;
-					min-width: 100%;
+					grid-template-columns: 1fr;
 				}
 			}
 		</style>

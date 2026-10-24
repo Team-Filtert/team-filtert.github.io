@@ -25,7 +25,7 @@ if (typing !== null) {
 const stars: HTMLElement | null = document.getElementById("stars");
 
 if (stars !== null && !reduceMotion) {
-  for (let i: number = 0; i < 200; i += 1) {
+  for (let i: number = 0; i < 280; i += 1) {
     const star: HTMLDivElement = document.createElement("div");
     const middle: HTMLDivElement = document.createElement("div");
     const inner: HTMLDivElement = document.createElement("div");

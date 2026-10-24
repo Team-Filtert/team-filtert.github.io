@@ -156,110 +156,230 @@ templ ChapterCards(c ssg.Ctx, chapters []Chp) {
 
 templ ChapterCardsCSS() {
 	<style>
-		.char-sec {
-			font-size: 0.8rem;
-		}
-
-		/* Main cast cards: centre the portrait, name and role. */
-		.story .characters {
-			justify-content: center;
-		}
-
-		.story .b_card {
-			text-align: center;
-		}
-
-		.story .card_h {
-			justify-content: center;
-		}
-
-		.chapter-list {
-			display: grid;
-			gap: 1.5rem;
-			margin-top: 1.5rem;
-		}
-
-		.chapter-card {
-			padding: 1rem;
-			/*background: rgba(25, 27, 38, 0.4);*/
-			border-top: 3px solid rgba(255, 255, 255, 0.15);
-			transition: background 0.3s ease;
-		}
-
-		.chapter-head {
-			display: flex;
-			flex-wrap: wrap;
-			align-items: center;
-			gap: 0.75rem 1rem;
-			margin-bottom: 0.9rem;
-		}
-
-		.chapter-status {
-			margin-left: auto;
-			padding: 0.2rem 0.55rem;
-			border: 1px solid currentColor;
-			/*color: var(--blue);*/
-			font-size: 0.7rem;
-			font-weight: bold;
-			letter-spacing: 0.08em;
-			text-transform: uppercase;
-		}
-
-		.chapter-body > p {
-			margin: 0.5rem 0 0;
-		}
-
-		.chapter-body details {
-			margin: 1rem;
-			margin-top: 1.5rem;
-			padding: 1rem;
-			border: 3px dashed rgba(255, 255, 255, 0.15);
-		}
-
-		.chapter-body summary {
-			padding: 0.5rem;
-			font-weight: bold;
-			font-size: 1.1rem;
-			font-family: "Press Start 2P";
-			cursor: pointer;
-		}
-
-		.chapter-body summary:hover {
-			text-decoration: underline;
-		}
-
-		.chapter-body details[open] summary {
-			margin-bottom: 1rem;
-		}
-
-		.chapter-body details > p {
-			margin: 0 0 1rem;
-		}
-
-		/* Only the placeholder itself uses the retro font. */
-		.chapter-body .filtered {
-			display: block;
-			margin: 0;
-			padding: 1rem;
-			font-family: "Press Start 2P";
-			font-size: 2rem;
-			font-style:italic;
-			line-height: 1.4;
-			letter-spacing: 0.1em;
-			text-align: center;
-			text-transform: uppercase;
-		}
-
-		/* Compact cast row inside chapter cards. */
-		.chapter-body .characters {
-			gap: 0.75rem;
-			margin: 1rem;
-		}
-
-		@media (max-width: 720px) {
-			.chapter-card {
-				padding: 0.75rem;
+			.char-sec {
+				margin-top: 2rem;
+				font-size: 0.9rem;
 			}
-		}
-	</style>
+
+			.char-sec > h2 {
+				color: var(--mint);
+			}
+
+			.char-sec > h2::before {
+				content: "";
+				display: inline-block;
+				width: 0.5em;
+				height: 0.5em;
+				margin-right: 0.6em;
+				background: linear-gradient(135deg, var(--green), var(--mint));
+				transform: translateY(-0.08em) rotate(45deg);
+			}
+
+			.char-sec .characters {
+				grid-template-columns: repeat(
+					auto-fit,
+					minmax(min(100%, 14rem), 1fr)
+				);
+			}
+
+
+			/* Main cast cards: centre the portrait, name and role. */
+			.story .b_card {
+				align-items: center;
+				text-align: center;
+			}
+
+			.story .card_h {
+				flex-direction: column;
+				justify-content: center;
+				width: 100%;
+				margin-bottom: 0.75rem;
+				text-align: center;
+			}
+
+			.story .b_card img {
+				width: 6rem;
+				height: 6rem;
+				border-radius: 0;
+			}
+
+			.story .b_card > p {
+				font-size: 0.9rem;
+			}
+
+			.chapter-list {
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+				margin-top: 1.5rem;
+			}
+
+			.chapter-card {
+				display: flex;
+				flex-direction: column;
+				padding: 1.25rem;
+				background: var(--bg-deep);
+				border: 1px solid var(--border-strong);
+				transition:
+					transform 0.2s ease,
+					border-color 0.2s ease;
+			}
+
+			.chapter-card:hover {
+				transform: translateY(-2px);
+				border-color: var(--green);
+			}
+
+			.chapter-head {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 0.6rem 1rem;
+				margin-bottom: 0.75rem;
+			}
+
+			.chapter-head h2 {
+				margin: 0;
+				font-size: 1.4rem;
+			}
+
+			.chapter-status {
+				margin-left: 0;
+				padding: 0.25rem 0.6rem;
+				background: rgba(255, 255, 255, 0.06);
+				border: 1px solid var(--border);
+				border-radius: 0;
+				color: var(--muted);
+				font-family: var(--font-pixel);
+				font-size: 0.55rem;
+				line-height: 1.8;
+				text-transform: uppercase;
+			}
+
+			.chapter-card[data-status="Under Development"] .chapter-status {
+				background: var(--mint);
+				border-color: transparent;
+				color: #062114;
+			}
+
+			.chapter-card[data-status="Planned"] .chapter-status {
+				background: var(--lime);
+				border-color: transparent;
+				color: #1a2608;
+			}
+
+			.chapter-body {
+				color: var(--text-soft);
+				font-size: 0.95rem;
+			}
+
+			.chapter-body > p,
+			.chapter-body details > p {
+				max-width: none;
+			}
+
+			.chapter-body > p:first-child {
+				margin-top: 0;
+			}
+
+			.chapter-body details {
+				margin-top: 1rem;
+				padding: 1rem;
+				background: transparent;
+				border: 1px dashed var(--border-strong);
+			}
+
+			.chapter-body summary {
+				display: inline-block;
+				color: var(--text);
+				font-family: var(--font-pixel);
+				font-size: 0.7rem;
+				font-weight: 400;
+				line-height: 1.8;
+				list-style: none;
+				cursor: pointer;
+			}
+
+			.chapter-body summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.chapter-body summary::before {
+				content: "▶";
+				margin-right: 0.45rem;
+				color: var(--green);
+				font-family: var(--font-body);
+				font-size: 0.7em;
+			}
+
+			.chapter-body details[open] summary::before {
+				content: "▼";
+			}
+
+			.chapter-body summary:hover {
+				color: var(--green);
+			}
+
+			.chapter-body details[open] summary {
+				margin-bottom: 0.75rem;
+			}
+
+			.chapter-body details > p {
+				margin: 0 0 0.75rem;
+			}
+
+			/* Only the placeholder itself uses the retro font. */
+			.chapter-body .filtered {
+				display: block;
+				margin: 0;
+				padding: 1rem;
+				color: var(--green);
+				font-family: var(--font-pixel);
+				font-size: 1.6rem;
+				font-style: italic;
+				line-height: 1.6;
+				letter-spacing: 0.1em;
+				text-align: center;
+				text-transform: uppercase;
+			}
+
+			/* Compact cast row inside chapter cards. */
+			.chapter-body .characters {
+				grid-template-columns: repeat(
+					auto-fit,
+					minmax(min(100%, 9rem), 1fr)
+				);
+				gap: 0.75rem;
+				margin: 1rem 0;
+			}
+
+			.chapter-body .b_card {
+				padding: 0.85rem;
+				font-size: 0.85rem;
+			}
+
+			.chapter-body .card_h {
+				margin-bottom: 0.5rem;
+			}
+
+			.chapter-body .b_card img {
+				width: 3.5rem;
+				height: 3.5rem;
+				border-radius: 0;
+			}
+
+			.chapter-body .card_h .card-titles h3 {
+				font-size: 1rem;
+			}
+
+			.chapter-body .card_h .card-titles p {
+				font-size: 0.8rem;
+			}
+
+			@media (max-width: 720px) {
+				.chapter-card {
+					padding: 1rem;
+				}
+			}
+		</style>
 }

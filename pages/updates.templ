@@ -17,9 +17,8 @@ templ Updates(c ssg.Ctx, posts []templates.Update) {
 				<span class="post-count">{ len(posts) } Devlogs</span>
 			</div>
 		</header>
-
 		<section>
-			<div>
+			<div class="updates-list">
 				for _, post := range posts {
 					@templates.UpdateCard(c, post)
 				}
