@@ -60,14 +60,13 @@ func newSiteLoader() *content.Loader {
 	content.Register(components, "asset", templates.Asset)
 	content.Register(components, "gallery", templates.Gallery)
 	content.Register(components, "castgallery", pages.CastGallery)
-	return content.NewLoader(nil).WithComponents(components)
+	return content.NewLoader(nil).
+		WithComponents(components).
+		WithRenderOptions(content.WithExternalLinks("_blank"))
 }
 
 func loadMembers() map[string]templates.Member {
-	collection, err := content.LoadCollectionWith[memberFrontMatter](siteLoader, "content/members")
-	if err != nil {
-		log.Fatalf("reading content/members: %v", err)
-	}
+	collection := content.MustLoadCollectionWith[memberFrontMatter](siteLoader, "content/members")
 
 	members := make(map[string]templates.Member, len(collection.Items))
 	for _, item := range collection.Items {
@@ -89,10 +88,7 @@ func loadMembers() map[string]templates.Member {
 }
 
 func loadChapters() []pages.Chp {
-	collection, err := content.LoadCollectionWith[ChapterFrontMatter](siteLoader, "content/chapters")
-	if err != nil {
-		log.Fatalf("reading content/chapters: %v", err)
-	}
+	collection := content.MustLoadCollectionWith[ChapterFrontMatter](siteLoader, "content/chapters")
 
 	chapters := make([]pages.Chp, 0, len(collection.Items))
 	for _, item := range collection.Items {
@@ -114,10 +110,7 @@ func loadChapters() []pages.Chp {
 }
 
 func loadUpdates(includeDrafts bool) []templates.Update {
-	collection, err := content.LoadCollectionWith[updateFrontMatter](siteLoader, "content/updates")
-	if err != nil {
-		log.Fatalf("reading content/updates: %v", err)
-	}
+	collection := content.MustLoadCollectionWith[updateFrontMatter](siteLoader, "content/updates")
 
 	updates := make([]templates.Update, 0, len(collection.Items))
 	for _, item := range collection.Items {

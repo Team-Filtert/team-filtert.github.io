@@ -1,15 +1,15 @@
 +++
 title = "Devlog #6: Yet another rewrite..."
-summary = "I did another rewrite. We made progress on the actuall game."
+summary = "I did another rewrite of the website. We made progress on the actuall game."
 author = ["LukasDerBaum"]
 published = "draft"
 +++
 
 ## The website rewrite
 
-Yes, I know. Another rewrite. This time it's the website, not the game.
+Yes, I know. Another rewrite. This time it's the website (again), not the game.
 
-The site has been running on [Astro](https://astro.build) since [Devlog #2](/updates/second-update/), and that was a big step up from the original setup. But it still meant keeping a whole Node toolchain around to build a mostly static site, and every small change went through pnpm and a pile of dependencies.
+The site has been running on [Astro](https://astro.build) since [Devlog #2](/updates/Devlog2/), and that was a big step up from the original setup. But it still meant keeping a whole Node toolchain around to build a mostly static site, and every small change went through pnpm and a pile of dependencies.
 
 So the site is now built with [astwerk](https://github.com/LukasDerBaum42/astwerk), my own static site generator written in Go. Pages are Go and templ components, devlogs and bios are still Markdown with TOML front matter, and `go run .` builds the whole thing. Astro and pnpm are gone. The few interactive bits are still TypeScript, because I'm not rewriting the starfield in Go again (yes, I did do that for my own website, and it's a bad idea).
 

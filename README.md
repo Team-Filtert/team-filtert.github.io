@@ -41,13 +41,14 @@ so keep selectors unique.
 
 - `templ generate` — regenerate the `*_templ.go` files after editing a `.templ`
 - `go run .` — build into `./build`
-- `go run . -dev` — build without cleaning the output directory
-- `go run . -serve` — serve `./build` on <http://localhost:8080>, rebuild and reload on change
+- `go run . -serve` — serve `./build` on <http://localhost:8080>, rebuild and reload on change (drafts on)
 - `go run . -drafts` — include devlogs marked as drafts
 - `go run . -changed PATH` — rebuild only what depends on `PATH` (repeatable)
 
-`-serve` runs `templ generate` and `go run . -dev` for you, so it is the one to
-leave running while working. It uses an installed `templ` if available and
+`-serve` runs `templ generate` and `go run . --drafts` for you, so it is the
+one to leave running while working. The output directory is always `build/`,
+and serve mode always includes drafts. A normal build cleans `build/` first;
+`-changed` keeps it and rebuilds only the affected nodes. It uses an installed `templ` if available and
 falls back to `go run github.com/a-h/templ/cmd/templ@v0.3.1020` otherwise.
 
 Edits under `content/`, `public/`, `style/` and `scripts/` rebuild only the

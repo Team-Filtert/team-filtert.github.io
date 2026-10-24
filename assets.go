@@ -37,7 +37,7 @@ func loadAssets(members map[string]templates.Member) templates.AssetLibrary {
 		log.Fatalf("reading %s: %v", publicDir, err)
 	}
 
-	catalogued := make([]templates.AssetEntry, 0, len(entries))
+	catalogued := make([]assets.Entry[templates.AssetEntry], 0, len(entries))
 	for _, entry := range entries {
 		id := entry.File.Name
 		meta := entry.Meta
@@ -67,15 +67,19 @@ func loadAssets(members map[string]templates.Member) templates.AssetLibrary {
 			alt = id
 		}
 
-		catalogued = append(catalogued, templates.AssetEntry{
-			ID:         id,
-			Alt:        alt,
-			Path:       entry.File.Path,
-			Type:       meta.Type,
-			Credit:     meta.Credit,
-			CreditName: creditName,
-			License:    meta.License,
-			Tags:       normalizeTags(meta.Tags),
+		catalogued = append(catalogued, assets.Entry[templates.AssetEntry]{
+			File:    entry.File,
+			HasMeta: true,
+			Meta: templates.AssetEntry{
+				ID:         id,
+				Alt:        alt,
+				Path:       entry.File.Path,
+				Type:       meta.Type,
+				Credit:     meta.Credit,
+				CreditName: creditName,
+				License:    meta.License,
+				Tags:       normalizeTags(meta.Tags),
+			},
 		})
 	}
 

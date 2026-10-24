@@ -1,8 +1,7 @@
 // Command site builds the Team Filtered website with astwerk.
 //
 //	go run .            # build into build/
-//	go run . -dev       # keep the existing output and overwrite in place
-//	go run . -serve     # serve build/ on localhost:8080 and rebuild on change
+//	go run . -serve     # serve build/ and rebuild on change (drafts on)
 //	go run . -drafts    # include devlogs marked as drafts
 package main
 
@@ -13,6 +12,7 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
+	"time"
 
 	"github.com/LukasDerBaum42/astwerk/devserver"
 	"github.com/LukasDerBaum42/astwerk/ssg"
@@ -21,31 +21,30 @@ import (
 	"github.com/a-h/templ"
 )
 
+const outDir = "build"
+
 func main() {
-	dev := flag.Bool("dev", false, "keep the existing output and overwrite in place")
 	serve := flag.Bool("serve", false, "serve the build directory and rebuild on change")
 	addr := flag.String("addr", devserver.DefaultAddr, "address the dev server listens on")
-	out := flag.String("out", "build", "output directory")
 	drafts := flag.Bool("drafts", false, "include draft devlogs")
 	var changed stringList
 	flag.Var(&changed, "changed", "changed file for an incremental build (repeatable)")
 	flag.Parse()
 
 	if *serve {
-		runServer(*out, *addr, *drafts)
+		runServer(*addr)
 		return
 	}
 
-	buildSite(*out, *dev, *drafts, changed)
-	log.Printf("built the site into %s/", *out)
+	buildSite(*drafts, changed)
+	log.Printf("built the site into %s/", outDir)
 }
 
-func runServer(outDir, addr string, drafts bool) {
+func runServer(addr string) {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
 	templ, templArgs := templCommand()
-	tracker := newChangeTracker()
 
 	// Public images and fonts are copied into the build, so the watcher has to
 	// notice them too, not just the default code/content extensions.
@@ -55,20 +54,12 @@ func runServer(outDir, addr string, drafts bool) {
 	ignore := append([]string{}, devserver.DefaultIgnore...)
 	ignore = append(ignore, ".gomodcache", ".gocache")
 
-	build := func() error {
-		changed, removed, initial, err := tracker.diff()
-		if err != nil {
-			return err
-		}
-		if !initial && !removed && len(changed) == 0 {
-			return nil
+	build := func(changed []string, full bool) error {
+		if !full && !dataOnly(changed) {
+			full = true
 		}
 
-		full := initial || removed || !tracker.dataOnly(changed)
-		args := []string{"run", ".", "--out", outDir, "--dev"}
-		if drafts {
-			args = append(args, "--drafts")
-		}
+		args := []string{"run", ".", "--drafts"}
 		if !full {
 			for _, path := range changed {
 				args = append(args, "--changed", path)
@@ -82,11 +73,11 @@ func runServer(outDir, addr string, drafts bool) {
 	}
 
 	err := devserver.Run(ctx, devserver.Config{
-		Dir:    outDir,
-		Addr:   addr,
-		Exts:   exts,
-		Ignore: ignore,
-		Build:  build,
+		Dir:          outDir,
+		Addr:         addr,
+		Exts:         exts,
+		Ignore:       ignore,
+		BuildChanged: build,
 	})
 	if err != nil {
 		log.Fatal(err)
@@ -105,7 +96,7 @@ func templCommand() (string, []string) {
 	return "go", []string{"run", "github.com/a-h/templ/cmd/templ@" + TemplVersion, "generate"}
 }
 
-func buildSite(outDir string, dev, includeDrafts bool, changed []string) {
+func buildSite(includeDrafts bool, changed []string) {
 	members := loadMembers()
 	assetLibrary := loadAssets(members)
 	templates.SetAssetLibrary(assetLibrary)
@@ -117,6 +108,13 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) {
 		recent = recent[:3]
 	}
 	templates.SetFooterUpdates(recent)
+
+	updateDates := make(map[string]time.Time, len(updates))
+	for _, update := range updates {
+		if !update.Published.IsZero() {
+			updateDates["updates/"+update.Slug+"/"] = update.Published
+		}
+	}
 
 	leaders := pick(members, "wolfy", "lukas", "komi", "firearchers", "riko", "admiralensin")
 	chaps := loadChapters()
@@ -169,13 +167,15 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) {
 			return pages.NotFound(c)
 		},
 		"sitemap.xml": ssg.Static(func() templ.Component {
-			return ssg.Sitemap(ssg.URLs(root), ssg.SitemapOptions{BaseURL: templates.SiteURL})
+			return ssg.Sitemap(ssg.URLs(root), ssg.SitemapOptions{
+				BaseURL: templates.SiteURL,
+				LastMod: func(path string) time.Time { return updateDates[path] },
+			})
 		}),
 	}
 
 	if err := ssg.Build(root, ssg.BuildOptions{
 		OutDir:       outDir,
-		Dev:          dev,
 		Changed:      changed,
 		RelativeURLs: true,
 	}); err != nil {

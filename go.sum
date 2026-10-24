@@ -4,6 +4,8 @@ github.com/LukasDerBaum42/astwerk v0.9.0 h1:Hw2MiMQaI5hfLdox1NuFKVsv/+wEPhLDY7SN
 github.com/LukasDerBaum42/astwerk v0.9.0/go.mod h1:cj20kvxp0acq+tOr3BssDwOBjDVZx+up7JHjbmJe1kA=
 github.com/LukasDerBaum42/astwerk v0.9.1 h1:YBaRJ3ONPh43INAQ38Epq9rBV2+JUYBEkHAkywAw75I=
 github.com/LukasDerBaum42/astwerk v0.9.1/go.mod h1:cj20kvxp0acq+tOr3BssDwOBjDVZx+up7JHjbmJe1kA=
+github.com/LukasDerBaum42/astwerk v0.9.2 h1:O3fLh1Ah3JIv79bIflF5ZBczfiNm6H7My68Vnun1gj4=
+github.com/LukasDerBaum42/astwerk v0.9.2/go.mod h1:cj20kvxp0acq+tOr3BssDwOBjDVZx+up7JHjbmJe1kA=
 github.com/a-h/templ v0.3.1020 h1:ypAT/L5ySWEnZ6Zft/5yfoWXYYkhFNvEFOeeqecg4tw=
 github.com/a-h/templ v0.3.1020/go.mod h1:A2DlK61v+K+NRoGnhmYbNYVmtYHcFO5/AisMvBdDxTM=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
