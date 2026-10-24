@@ -26,10 +26,11 @@ Deployment is still GitHub Pages, so nothing changes on your end. It just takes 
 
 Together with the rewrite we went allong and made a few more chages to the site as well as adding new stuff.
 
-One of though changes was the redesing of the [About](/about/) page. The old one didn't really have much to show so the new one has much more content
-and the content is much better structured.
+The first thing you'll notice is that the site got a new look. The old blue and pink palette is gone and everything is built around green and mint on a darker background now, with reworked cards and footer to go with it. The pixel font is still around for the small accents, because some things should stay.
 
-Another addition is the new [Credits](/credits/) page with contains the credits for all the stuff on the site and Later the assets of the game.
+One of though changes was the redesing of the [About](/about/) page. The old one didn't really have much to show so the new one has much more content and the content is much better structured.
+
+Another addition is the new [Credits](/credits/) page, which contains the credits for all the stuff on the site and later the assets of the game. Everyone with artwork has their own page, and the names on the artwork cards and in the footer link straight to it, so you can go from a poster to everything that person made. The [Team](/team/) page has a section for former members now, and people who were never part of the team, like a commissioned artist, only show up in the credits with a short description of what they did.
 
 
 ## The Game progress

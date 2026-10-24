@@ -19,6 +19,7 @@ generator for Go + [templ](https://templ.guide/).
 | `content/members/*.md` | team bios, TOML front matter |
 | `content/chapters/*.md` | chapter cards, TOML front matter |
 | `content/character.json` | character cards for the About page |
+| `content/contributors.json` | 3rd-party artists and other external credits |
 | `style/` | shared CSS |
 | `scripts/` | TypeScript compiled to `build/scripts` |
 | `public/` | images and other assets, copied to the site root |
@@ -106,11 +107,13 @@ description = "Website maintainer"
 image = "/img/the_team/KTrain.png"
 departments = ["programming", "translation"]
 language = "Vietnamese"
+former = false
 +++
 ```
 
 Departments live in the `departments` table in `load.go`; add a member to a
-department in their front matter.
+department in their front matter. Set `former = true` for former members: they
+are skipped by the department sections and listed separately on the team page.
 
 ## Assets
 
@@ -152,6 +155,39 @@ A missing ID renders a visible error card and logs at build time.
 
 For the credits pages, `templates.Assets().All()` returns every entry sorted by
 ID. Each entry carries `Credit` (the member slug), `Tags`, and `License`.
+
+## Contributors
+
+There are three kinds of people on the site:
+
+- **Team members** live in `content/members/*.md` and appear in their department
+  sections on the team page.
+- **Former members** are also `content/members/*.md` files, but with
+  `former = true` in the front matter. They are left out of the departments and
+  listed under "Former Members" at the end of the team page.
+- **3rd parties** live in `content/contributors.json`. They get a credits page
+  and are never shown on the team page.
+
+```toml
+former = true
+```
+
+```json
+{
+  "troobsart": {
+    "name": "TroobsART",
+    "role": "3rd Party Artist",
+    "description": "Character artist behind Nere's design.",
+    "pfp": ""
+  }
+}
+```
+
+Keys are credit IDs, matching the `credit` field in `public/**/meta.json`.
+`description` is the little bio shown on the credits page; `pfp` is optional.
+
+Every entry in `contributors.json` that has catalogued artwork is listed on
+`/credits/` and gets a `/credits/<id>/` page.
 
 ## Credits
 

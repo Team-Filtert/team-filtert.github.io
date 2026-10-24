@@ -98,7 +98,8 @@ func templCommand() (string, []string) {
 
 func buildSite(includeDrafts bool, changed []string) {
 	members := loadMembers()
-	assetLibrary := loadAssets(members)
+	contributors := loadContributors()
+	assetLibrary := loadAssets(members, contributors)
 	templates.SetAssetLibrary(assetLibrary)
 	log.Printf("loaded %d assets", len(assetLibrary.All()))
 
@@ -122,7 +123,7 @@ func buildSite(includeDrafts bool, changed []string) {
 	team := sortedMembers(members)
 	groups := teamGroups(team)
 	allAssets := assetLibrary.All()
-	people := creditPeople(team, allAssets)
+	people := creditPeople(team, allAssets, contributors)
 	creditGroups, assetsByMember, credited := buildCreditGroups(people, allAssets)
 	creditTags := assetLibrary.Tags()
 
@@ -133,7 +134,7 @@ func buildSite(includeDrafts bool, changed []string) {
 		CopyFrom: "public",
 		// Incremental builds rebuild this node when any of these data sources
 		// change. The style and scripts directories have their own nodes below.
-		DependsOn: []string{"content/members", "content/updates", "public"},
+		DependsOn: []string{"content/members", "content/updates", "content/contributors.json", "public"},
 		Page: func(c ssg.Ctx) templ.Component {
 			return pages.Home(c, recent, leaders)
 		},
@@ -141,7 +142,7 @@ func buildSite(includeDrafts bool, changed []string) {
 			"about": aboutNode(chaps),
 			"team": {
 				Title:     "The Team",
-				DependsOn: []string{"content/members"},
+				DependsOn: []string{"content/members", "content/contributors.json", "public"},
 				Page:      func(c ssg.Ctx) templ.Component { return pages.Team(c, leaders, groups) },
 			},
 			"contact": {
@@ -194,7 +195,7 @@ func aboutNode(chapters []pages.Chp) ssg.Node {
 func creditsNode(people, credited []templates.Member, groups []pages.CreditGroup, tags []string, assetsByMember map[string][]templates.AssetEntry) ssg.Node {
 	return ssg.Node{
 		Title:     "Credits",
-		DependsOn: []string{"content/members", "public"},
+		DependsOn: []string{"content/members", "content/contributors.json", "public"},
 		Page: func(c ssg.Ctx) templ.Component {
 			return pages.Credits(c, credited, groups, tags)
 		},
@@ -203,7 +204,7 @@ func creditsNode(people, credited []templates.Member, groups []pages.CreditGroup
 			for _, person := range people {
 				children[person.Slug] = ssg.Node{
 					Title:     "Credits: " + person.Name,
-					DependsOn: []string{"content/members", "public"},
+					DependsOn: []string{"content/members", "content/contributors.json", "public"},
 					Page: func(c ssg.Ctx) templ.Component {
 						return pages.CreditMember(c, person, assetsByMember[person.Slug])
 					},

@@ -26,6 +26,15 @@ func MarkdownBody(c ssg.Ctx, body func(ssg.Ctx) templpkg.Component) templpkg.Com
 	})
 }
 
+// TextBody wraps plain text in a paragraph, for contributor descriptions.
+// It returns nil for empty text so a bio falls back to the normal default.
+func TextBody(text string) func(ssg.Ctx) templpkg.Component {
+	if strings.TrimSpace(text) == "" {
+		return nil
+	}
+	return func(ssg.Ctx) templpkg.Component { return PlainText(text) }
+}
+
 // MemberBio renders a member's bio, with a visible fallback when it is empty.
 func MemberBio(c ssg.Ctx, body func(ssg.Ctx) templpkg.Component) templpkg.Component {
 	return templpkg.ComponentFunc(func(ctx context.Context, w io.Writer) error {

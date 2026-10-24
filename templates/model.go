@@ -15,6 +15,7 @@ type Member struct {
 	Image       string
 	Language    string
 	Departments []string
+	Former      bool
 	Body        func(ssg.Ctx) templpkg.Component
 }
 

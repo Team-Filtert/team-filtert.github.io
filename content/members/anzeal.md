@@ -4,6 +4,7 @@ description = "Ex Head of the Art Department"
 image = "/img/the_team/Anzeal.jpg"
 departments = ["art", "translation"]
 language = "French"
+former = true
 +++
 
 

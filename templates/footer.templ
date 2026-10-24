@@ -92,12 +92,19 @@ templ FooterStyles() {
 		}
 
 		.footer-slogan {
+			width: fit-content;
+			max-width: 100%;
 			margin: 0 auto clamp(1.75rem, 4vw, 2.5rem);
-			color: var(--green);
+			padding: 0.5rem 1.1rem;
+			border-left: 3px solid var(--green);
+			border-right: 3px solid var(--green);
+			background: rgba(95, 232, 148, 0.08);
+			color: var(--mint);
 			font-family: var(--font-pixel);
 			font-size: clamp(0.5rem, 1.2vw, 0.65rem);
 			line-height: 2;
 			text-align: center;
+			text-shadow: 0 0 1rem rgba(95, 232, 148, 0.45);
 		}
 
 		.footer-divider {
