@@ -8,7 +8,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
 	"log"
 	"os"
@@ -37,9 +36,7 @@ func main() {
 		return
 	}
 
-	if err := buildSite(*out, *dev, *drafts, changed); err != nil {
-		log.Fatal(err)
-	}
+	buildSite(*out, *dev, *drafts, changed)
 	log.Printf("built the site into %s/", *out)
 }
 
@@ -108,54 +105,28 @@ func templCommand() (string, []string) {
 	return "go", []string{"run", "github.com/a-h/templ/cmd/templ@" + TemplVersion, "generate"}
 }
 
-func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
-	members, err := loadMembers()
-	if err != nil {
-		return err
-	}
-	assetLibrary, err := loadAssets(members)
-	if err != nil {
-		return err
-	}
+func buildSite(outDir string, dev, includeDrafts bool, changed []string) {
+	members := loadMembers()
+	assetLibrary := loadAssets(members)
 	templates.SetAssetLibrary(assetLibrary)
 	log.Printf("loaded %d assets", len(assetLibrary.All()))
 
-	updates, err := loadUpdates(includeDrafts)
-	if err != nil {
-		return err
-	}
-	if len(updates) == 0 {
-		return errors.New("no devlogs found in content/updates")
-	}
-
+	updates := loadUpdates(includeDrafts)
 	recent := updates
 	if len(recent) > 3 {
 		recent = recent[:3]
 	}
 	templates.SetFooterUpdates(recent)
 
-	leaders, err := pick(members, "wolfy", "lukas", "komi", "firearchers", "riko", "admiralensin")
-	if err != nil {
-		return err
-	}
-	characters, err := loadCharacters()
-	if err != nil {
-		return err
-	}
-	chaps, err := loadChapters()
-	if err != nil {
-		return err
-	}
-
-	groups := teamGroups(members)
+	leaders := pick(members, "wolfy", "lukas", "komi", "firearchers", "riko", "admiralensin")
+	chaps := loadChapters()
 
 	team := sortedMembers(members)
+	groups := teamGroups(team)
 	allAssets := assetLibrary.All()
 	people := creditPeople(team, allAssets)
 	creditGroups, assetsByMember, credited := buildCreditGroups(people, allAssets)
 	creditTags := assetLibrary.Tags()
-
-	pages.Chars = characters
 
 	root := ssg.Node{
 		Title: "Neuro-sama: The Good, The Evil And The Filtered",
@@ -169,11 +140,7 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 			return pages.Home(c, recent, leaders)
 		},
 		Children: map[string]ssg.Node{
-			"about": {
-				Title:     "About the game",
-				DependsOn: []string{"content/character.json", "content/chapters"},
-				Page:      func(c ssg.Ctx) templ.Component { return pages.About(c, chaps) },
-			},
+			"about": aboutNode(chaps),
 			"team": {
 				Title:     "The Team",
 				DependsOn: []string{"content/members"},
@@ -183,44 +150,8 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 				Title: "Contact",
 				Page:  func(c ssg.Ctx) templ.Component { return pages.Contact(c) },
 			},
-			"credits": {
-				Title:     "Credits",
-				DependsOn: []string{"content/members", "public"},
-				Page: func(c ssg.Ctx) templ.Component {
-					return pages.Credits(c, credited, creditGroups, creditTags)
-				},
-				Generate: func() map[string]ssg.Node {
-					children := make(map[string]ssg.Node, len(people))
-					for _, person := range people {
-						person := person
-						children[person.Slug] = ssg.Node{
-							Title:     "Credits: " + person.Name,
-							DependsOn: []string{"content/members", "public"},
-							Page: func(c ssg.Ctx) templ.Component {
-								return pages.CreditMember(c, person, assetsByMember[person.Slug])
-							},
-						}
-					}
-					return children
-				},
-			},
-			"updates": {
-				Title:     "Updates",
-				DependsOn: []string{"content/updates", "public"},
-				Page:      func(c ssg.Ctx) templ.Component { return pages.Updates(c, updates) },
-				Generate: func() map[string]ssg.Node {
-					children := make(map[string]ssg.Node, len(updates))
-					for _, u := range updates {
-						u := u
-						children[u.Slug] = ssg.Node{
-							Title:     u.Title,
-							DependsOn: []string{"content/updates", "public"},
-							Page:      func(c ssg.Ctx) templ.Component { return pages.UpdateDetail(c, u) },
-						}
-					}
-					return children
-				},
-			},
+			"credits": creditsNode(people, credited, creditGroups, creditTags, assetsByMember),
+			"updates": updatesNode(updates),
 			"style":   {CopyFrom: "style", DependsOn: []string{"style"}},
 			"scripts": {CompileFrom: "scripts", DependsOn: []string{"scripts"}},
 		},
@@ -229,7 +160,7 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 	// ssg.URLs walks the finished tree (including generated children), so the
 	// sitemap cannot drift from the pages Build actually writes.
 	root.Files = map[string]ssg.PageFunc{
-		".nojekyll": empty,
+		".nojekyll": ssg.Static(func() templ.Component { return templ.Raw("") }),
 		"404.html": func(c ssg.Ctx) templ.Component {
 			// GitHub Pages serves this one file for any missing path, so relative
 			// URLs would resolve against that path. The site is deployed at the
@@ -237,13 +168,69 @@ func buildSite(outDir string, dev, includeDrafts bool, changed []string) error {
 			c.Relative = false
 			return pages.NotFound(c)
 		},
-		"sitemap.xml": sitemap(pageEntries(ssg.URLs(root), updates)),
+		"sitemap.xml": ssg.Static(func() templ.Component {
+			return ssg.Sitemap(ssg.URLs(root), ssg.SitemapOptions{BaseURL: templates.SiteURL})
+		}),
 	}
 
-	return ssg.Build(root, ssg.BuildOptions{
+	if err := ssg.Build(root, ssg.BuildOptions{
 		OutDir:       outDir,
 		Dev:          dev,
 		Changed:      changed,
 		RelativeURLs: true,
-	})
+	}); err != nil {
+		log.Fatal(err)
+	}
+}
+
+func aboutNode(chapters []pages.Chp) ssg.Node {
+	return ssg.Node{
+		Title:     "About the game",
+		DependsOn: []string{"content/character.json", "content/chapters"},
+		Page:      func(c ssg.Ctx) templ.Component { return pages.About(c, chapters) },
+	}
+}
+
+func creditsNode(people, credited []templates.Member, groups []pages.CreditGroup, tags []string, assetsByMember map[string][]templates.AssetEntry) ssg.Node {
+	return ssg.Node{
+		Title:     "Credits",
+		DependsOn: []string{"content/members", "public"},
+		Page: func(c ssg.Ctx) templ.Component {
+			return pages.Credits(c, credited, groups, tags)
+		},
+		Generate: func() map[string]ssg.Node {
+			children := make(map[string]ssg.Node, len(people))
+			for _, person := range people {
+				person := person
+				children[person.Slug] = ssg.Node{
+					Title:     "Credits: " + person.Name,
+					DependsOn: []string{"content/members", "public"},
+					Page: func(c ssg.Ctx) templ.Component {
+						return pages.CreditMember(c, person, assetsByMember[person.Slug])
+					},
+				}
+			}
+			return children
+		},
+	}
+}
+
+func updatesNode(updates []templates.Update) ssg.Node {
+	return ssg.Node{
+		Title:     "Updates",
+		DependsOn: []string{"content/updates", "public"},
+		Page:      func(c ssg.Ctx) templ.Component { return pages.Updates(c, updates) },
+		Generate: func() map[string]ssg.Node {
+			children := make(map[string]ssg.Node, len(updates))
+			for _, u := range updates {
+				u := u
+				children[u.Slug] = ssg.Node{
+					Title:     u.Title,
+					DependsOn: []string{"content/updates", "public"},
+					Page:      func(c ssg.Ctx) templ.Component { return pages.UpdateDetail(c, u) },
+				}
+			}
+			return children
+		},
+	}
 }

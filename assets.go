@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"regexp"
 	"slices"
 	"sort"
@@ -29,12 +29,12 @@ var creditID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]*$`)
 // loadAssets scans public/ for meta.json/meta.toml sidecars and combines every
 // catalogued file into one global, ID-indexed lookup. The asset's URL comes
 // from the scanner, so it is always relative to the public root.
-func loadAssets(members map[string]templates.Member) (templates.AssetLibrary, error) {
+func loadAssets(members map[string]templates.Member) templates.AssetLibrary {
 	entries, err := assets.LoadTree[assetMeta](publicDir, assets.Options[assetMeta]{
 		RequireMeta: true,
 	})
 	if err != nil {
-		return templates.AssetLibrary{}, fmt.Errorf("reading %s: %w", publicDir, err)
+		log.Fatalf("reading %s: %v", publicDir, err)
 	}
 
 	catalogued := make([]templates.AssetEntry, 0, len(entries))
@@ -45,15 +45,11 @@ func loadAssets(members map[string]templates.Member) (templates.AssetLibrary, er
 		switch meta.Type {
 		case "image", "video", "audio":
 		default:
-			return templates.AssetLibrary{}, fmt.Errorf(
-				"%s: %q has unsupported type %q", entry.File.Path, id, meta.Type,
-			)
+			log.Fatalf("%s: %q has unsupported type %q", entry.File.Path, id, meta.Type)
 		}
 
 		if meta.Credit != "" && !creditID.MatchString(meta.Credit) {
-			return templates.AssetLibrary{}, fmt.Errorf(
-				"%s: credit %q is not a valid ID", entry.File.Path, meta.Credit,
-			)
+			log.Fatalf("%s: credit %q is not a valid ID", entry.File.Path, meta.Credit)
 		}
 
 		// A team member's name and bio come from content/members. Any other
@@ -83,7 +79,11 @@ func loadAssets(members map[string]templates.Member) (templates.AssetLibrary, er
 		})
 	}
 
-	return templates.NewAssetLibrary(catalogued)
+	library, err := templates.NewAssetLibrary(catalogued)
+	if err != nil {
+		log.Fatalf("building asset library: %v", err)
+	}
+	return library
 }
 
 func normalizeTags(tags []string) []string {

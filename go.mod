@@ -3,7 +3,7 @@ module github.com/Team-Filtert/Webside
 go 1.27.1
 
 require (
-	github.com/LukasDerBaum42/astwerk v0.9.0
+	github.com/LukasDerBaum42/astwerk v0.9.1
 	github.com/a-h/templ v0.3.1020
 )
 

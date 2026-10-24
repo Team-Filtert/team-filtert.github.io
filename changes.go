@@ -3,6 +3,7 @@ package main
 import (
 	"io/fs"
 	"path/filepath"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -82,14 +83,19 @@ func (t *changeTracker) dataOnly(changed []string) bool {
 			return false
 		}
 		rel = filepath.ToSlash(rel)
-		if !strings.HasPrefix(rel, "content/") &&
-			!strings.HasPrefix(rel, "public/") &&
-			!strings.HasPrefix(rel, "style/") &&
-			!strings.HasPrefix(rel, "scripts/") {
+		if !isIncrementalPath(rel) {
 			return false
 		}
 	}
 	return true
+}
+
+var incrementalPrefixes = []string{"content/", "public/", "style/", "scripts/"}
+
+func isIncrementalPath(path string) bool {
+	return slices.ContainsFunc(incrementalPrefixes, func(prefix string) bool {
+		return strings.HasPrefix(path, prefix)
+	})
 }
 
 func scanFiles() (map[string]fileState, error) {

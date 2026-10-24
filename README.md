@@ -9,15 +9,16 @@ generator for Go + [templ](https://templ.guide/).
 
 | Path | What it is |
 | --- | --- |
-| `main.go` | the `ssg.Node` tree and the build flags |
+| `main.go` | the `ssg.Node` tree, the sitemap and the build flags |
 | `load.go` | `content.LoadCollection`, the department table, and team grouping |
 | `assets.go` | the `assets.LoadTree` wrapper that validates sidecar metadata |
 | `changes.go` | change tracking for incremental dev builds |
-| `sitemap.go` | `sitemap.xml`, `.nojekyll` and the 404 plumbing |
 | `templates/` | the shell — layout, nav, footer and cards |
 | `pages/` | page bodies |
 | `content/updates/*.md` | devlogs, TOML front matter |
 | `content/members/*.md` | team bios, TOML front matter |
+| `content/chapters/*.md` | chapter cards, TOML front matter |
+| `content/character.json` | character cards for the About page |
 | `style/` | shared CSS |
 | `scripts/` | TypeScript compiled to `build/scripts` |
 | `public/` | images and other assets, copied to the site root |

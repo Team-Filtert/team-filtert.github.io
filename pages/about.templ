@@ -1,6 +1,7 @@
 package pages
 
 import (
+	"github.com/LukasDerBaum42/astwerk/content"
 	"github.com/LukasDerBaum42/astwerk/ssg"
 	"github.com/Team-Filtert/Webside/templates"
 	templpkg "github.com/a-h/templ"
@@ -13,7 +14,7 @@ type Chp struct {
 	Body   func(ssg.Ctx) templpkg.Component
 }
 
-var Chars map[string]templates.Character
+var Chars = content.MustLoadData[map[string]templates.Character]("content/character.json")
 
 templ About(c ssg.Ctx, chapters []Chp) {
 	@templates.Layout(c, templates.Meta{
@@ -22,51 +23,51 @@ templ About(c ssg.Ctx, chapters []Chp) {
 	}, nil) {
 		<div class="story">
 			<section>
-			<h1>About the game</h1>
-			<p>
-				Neuro-sama: The Good, The Evil And The Filtered is an ambitious JRPG
-				fan project featuring Neuro-sama and all of your favourite VTubers.
-				Nere (the embodiment of the twins' filter) has been let loose by a
-				drunk Vedal and is going on a rampage filtering everyone in the
-				Neuroverse! The twins set off across 7 unique worlds to try and stop
-				Nere from filtering all of their friends. Some VTubers are acting
-				strange, perhaps this is a side effect of Nere's corruption? Find
-				out the full story as more content gets released!
-			</p>
-			<p>
-				The game is still in development! Anything described here is subject to change!
-				It's also open-source, and we're always happy to have new people join us,
-				whether you write, draw, compose, program, design, or just want to help out.
-				If that sounds like you, come say hi on our
-				<a href="https://discord.gg/nAXzxMY9gT">Discord</a>
-				or check out our
-				<a href="https://github.com/Team-Filtert">GitHub</a>.
-			</p>
+				<h1>About the game</h1>
+				<p>
+					Neuro-sama: The Good, The Evil And The Filtered is an ambitious JRPG
+					fan project featuring Neuro-sama and all of your favourite VTubers.
+					Nere (the embodiment of the twins' filter) has been let loose by a
+					drunk Vedal and is going on a rampage filtering everyone in the
+					Neuroverse! The twins set off across 7 unique worlds to try and stop
+					Nere from filtering all of their friends. Some VTubers are acting
+					strange, perhaps this is a side effect of Nere's corruption? Find
+					out the full story as more content gets released!
+				</p>
+				<p>
+					The game is still in development! Anything described here is subject to change!
+					It's also open-source, and we're always happy to have new people join us,
+					whether you write, draw, compose, program, design, or just want to help out.
+					If that sounds like you, come say hi on our
+					<a href="https://discord.gg/nAXzxMY9gT">Discord</a>
+					or check out our
+					<a href="https://github.com/Team-Filtert">GitHub</a>.
+				</p>
 			</section>
 			<section>
-			<h2>The Story</h2>
-			<p>
-				Nere was never supposed to get loose, but now the filter is spreading across the Neuroverse
-				and the twins are the only ones who can stop it. Along the way they'll meet plenty of VTubers,
-				some who join them on their journey, and some who have already been filtered will stand in their way.
-			</p>
-			@CastGallery(c, []string{"Neuro", "Evil", "Nere", "Vedal"})
+				<h2>The Story</h2>
+				<p>
+					Nere was never supposed to get loose, but now the filter is spreading across the Neuroverse
+					and the twins are the only ones who can stop it. Along the way they'll meet plenty of VTubers,
+					some who join them on their journey, and some who have already been filtered will stand in their way.
+				</p>
+				@CastGallery(c, []string{"Neuro", "Evil", "Nere", "Vedal"})
 			</section>
 			<section>
-			<h2>Game Play</h2>
-			<p>
-				The game is a turn-based JRPG, and combat gives you two ways to play:
-			</p>
-			<ul>
-				<li>Active: Time your inputs to deal extra damage, at the risk of missing.</li>
-				<li>Relaxed: React passively and focus on strategy, with more predictable results.</li>
-			</ul>
-			<p>
-				In both modes you choose what each party member does and who they target. You'll use normal actions,
-				combo moves with other party members, ultimate moves that charge up over time, items and blocks.
-				Exploration takes the twins across seven different worlds, with side quests, shops and an inventory
-				system planned as we keep working on the game.
-			</p>
+				<h2>Game Play</h2>
+				<p>
+					The game is a turn-based JRPG, and combat gives you two ways to play:
+				</p>
+				<ul>
+					<li>Active: Time your inputs to deal extra damage, at the risk of missing.</li>
+					<li>Relaxed: React passively and focus on strategy, with more predictable results.</li>
+				</ul>
+				<p>
+					In both modes you choose what each party member does and who they target. You'll use normal actions,
+					combo moves with other party members, ultimate moves that charge up over time, items and blocks.
+					Exploration takes the twins across seven different worlds, with side quests, shops and an inventory
+					system planned as we keep working on the game.
+				</p>
 			</section>
 			<section class="chapters">
 				<h2>Chapters</h2>
@@ -83,7 +84,7 @@ templ About(c ssg.Ctx, chapters []Chp) {
 				<h2>Development</h2>
 				<p>
 					Chapter 1 is the demo and is still in development. The later chapters and systems described above are planned,
-				 	but not finished yet. We'll share more when they're ready, so please stay tuned for more updates!
+					but not finished yet. We'll share more when they're ready, so please stay tuned for more updates!
 				</p>
 			</section>
 		</div>
@@ -95,6 +96,7 @@ func characterOrFiltered(name string) templates.Character {
 	if !ok {
 		return templates.Character{Name: name, Hiden: true}
 	}
+	char.Name = name
 	return char
 }
 
@@ -144,7 +146,7 @@ templ ChapterCards(c ssg.Ctx, chapters []Chp) {
 					<span class="chapter-status">{ chp.Status }</span>
 				</div>
 				<div class="chapter-body">
-					@templates.MemberBio(c, chp.Body)
+					@templates.MarkdownBody(c, chp.Body)
 				</div>
 			</article>
 		}

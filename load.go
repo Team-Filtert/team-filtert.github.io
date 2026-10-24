@@ -1,9 +1,10 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
+	"log"
+	"maps"
+	"slices"
 	"sort"
 	"strings"
 	"time"
@@ -62,37 +63,17 @@ func newSiteLoader() *content.Loader {
 	return content.NewLoader(nil).WithComponents(components)
 }
 
-// loadCharacters reads content/character.json into a map keyed by character
-// name. astwerk has no single-file JSON loader, so this is plain encoding/json.
-func loadCharacters() (map[string]templates.Character, error) {
-	data, err := os.ReadFile("content/character.json")
-	if err != nil {
-		return nil, fmt.Errorf("reading content/character.json: %w", err)
-	}
-
-	var characters map[string]templates.Character
-	if err := json.Unmarshal(data, &characters); err != nil {
-		return nil, fmt.Errorf("decoding content/character.json: %w", err)
-	}
-
-	for name, character := range characters {
-		character.Name = name
-		characters[name] = character
-	}
-	return characters, nil
-}
-
-func loadMembers() (map[string]templates.Member, error) {
+func loadMembers() map[string]templates.Member {
 	collection, err := content.LoadCollectionWith[memberFrontMatter](siteLoader, "content/members")
 	if err != nil {
-		return nil, fmt.Errorf("reading content/members: %w", err)
+		log.Fatalf("reading content/members: %v", err)
 	}
 
 	members := make(map[string]templates.Member, len(collection.Items))
 	for _, item := range collection.Items {
 		fm := item.Meta
 		if fm.Name == "" {
-			return nil, fmt.Errorf("content/members/%s.md has no name", item.Slug)
+			log.Fatalf("content/members/%s.md has no name", item.Slug)
 		}
 		members[item.Slug] = templates.Member{
 			Slug:        item.Slug,
@@ -104,20 +85,20 @@ func loadMembers() (map[string]templates.Member, error) {
 			Body:        item.Content,
 		}
 	}
-	return members, nil
+	return members
 }
 
-func loadChapters() ([]pages.Chp, error) {
+func loadChapters() []pages.Chp {
 	collection, err := content.LoadCollectionWith[ChapterFrontMatter](siteLoader, "content/chapters")
 	if err != nil {
-		return nil, fmt.Errorf("reading content/chapters: %w", err)
+		log.Fatalf("reading content/chapters: %v", err)
 	}
 
 	chapters := make([]pages.Chp, 0, len(collection.Items))
 	for _, item := range collection.Items {
 		fm := item.Meta
 		if fm.ID == 0 {
-			return nil, fmt.Errorf("content/chapters/%s.md has no chapter number", item.Slug)
+			log.Fatalf("content/chapters/%s.md has no chapter number", item.Slug)
 		}
 
 		chapters = append(chapters, pages.Chp{
@@ -129,25 +110,25 @@ func loadChapters() ([]pages.Chp, error) {
 	}
 
 	sort.Slice(chapters, func(i, j int) bool { return chapters[i].ID < chapters[j].ID })
-	return chapters, nil
+	return chapters
 }
 
-func loadUpdates(includeDrafts bool) ([]templates.Update, error) {
+func loadUpdates(includeDrafts bool) []templates.Update {
 	collection, err := content.LoadCollectionWith[updateFrontMatter](siteLoader, "content/updates")
 	if err != nil {
-		return nil, fmt.Errorf("reading content/updates: %w", err)
+		log.Fatalf("reading content/updates: %v", err)
 	}
 
 	updates := make([]templates.Update, 0, len(collection.Items))
 	for _, item := range collection.Items {
 		fm := item.Meta
 		if fm.Title == "" {
-			return nil, fmt.Errorf("content/updates/%s.md has no title", item.Slug)
+			log.Fatalf("content/updates/%s.md has no title", item.Slug)
 		}
 
 		published, draft, err := publishedDate(fm.Published)
 		if err != nil {
-			return nil, fmt.Errorf("content/updates/%s.md: %w", item.Slug, err)
+			log.Fatalf("content/updates/%s.md: %v", item.Slug, err)
 		}
 		if draft && !includeDrafts {
 			continue
@@ -169,13 +150,17 @@ func loadUpdates(includeDrafts bool) ([]templates.Update, error) {
 		updates = append(updates, u)
 	}
 
+	if len(updates) == 0 {
+		log.Fatal("no devlogs found in content/updates")
+	}
+
 	sort.SliceStable(updates, func(i, j int) bool {
 		if updates[i].Published.Equal(updates[j].Published) {
 			return updates[i].Slug < updates[j].Slug
 		}
 		return updates[i].Published.After(updates[j].Published)
 	})
-	return updates, nil
+	return updates
 }
 
 // publishedDate accepts either a TOML date or the string "draft".
@@ -201,24 +186,20 @@ func publishedDate(v any) (time.Time, bool, error) {
 
 // pick returns the named members in the given order, failing loudly on a typo
 // rather than rendering a missing card.
-func pick(members map[string]templates.Member, slugs ...string) ([]templates.Member, error) {
+func pick(members map[string]templates.Member, slugs ...string) []templates.Member {
 	out := make([]templates.Member, 0, len(slugs))
 	for _, slug := range slugs {
 		m, ok := members[slug]
 		if !ok {
-			return nil, fmt.Errorf("no member with slug %q in content/members", slug)
+			log.Fatalf("no member with slug %q in content/members", slug)
 		}
 		out = append(out, m)
 	}
-	return out, nil
+	return out
 }
 
 func sortedMembers(members map[string]templates.Member) []templates.Member {
-	slugs := make([]string, 0, len(members))
-	for slug := range members {
-		slugs = append(slugs, slug)
-	}
-	sort.Strings(slugs)
+	slugs := slices.Sorted(maps.Keys(members))
 
 	out := make([]templates.Member, 0, len(slugs))
 	for _, slug := range slugs {
@@ -227,11 +208,11 @@ func sortedMembers(members map[string]templates.Member) []templates.Member {
 	return out
 }
 
-func teamGroups(members map[string]templates.Member) []pages.TeamGroup {
+func teamGroups(team []templates.Member) []pages.TeamGroup {
 	groups := make([]pages.TeamGroup, 0, len(departments))
 	for _, d := range departments {
 		var inDepartment []templates.Member
-		for _, m := range sortedMembers(members) {
+		for _, m := range team {
 			for _, id := range m.Departments {
 				if id == d.ID {
 					inDepartment = append(inDepartment, m)

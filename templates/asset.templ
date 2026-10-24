@@ -29,17 +29,13 @@ func AssetWithLicense(c ssg.Ctx, id string) templpkg.Component {
 	return assetFor(c, id, true)
 }
 
-// assetFor renders a card. A missing or invalid entry is a content bug, so it
-// is logged and rendered visibly instead of silently disappearing.
+// assetFor renders a card. A missing entry is a content bug, so it is logged
+// and rendered visibly instead of silently disappearing.
 func assetFor(c ssg.Ctx, id string, showLicense bool) templpkg.Component {
 	asset, ok := assetLibrary.Get(id)
 	if !ok {
 		log.Printf("asset %q not found in any meta.json", id)
 		return assetMissing(id, "not found")
-	}
-	if asset.Type != "image" && asset.Type != "video" && asset.Type != "audio" {
-		log.Printf("asset %q has unsupported type %q", id, asset.Type)
-		return assetMissing(id, "unsupported type: "+asset.Type)
 	}
 	return assetCard(c, asset, showLicense)
 }

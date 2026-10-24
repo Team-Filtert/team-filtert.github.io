@@ -30,7 +30,7 @@ type Update struct {
 }
 
 // Character is one entry in content/character.json. The map key is the
-// character's name, so loadCharacters fills Name in.
+// character's name, filled in when the card is rendered.
 type Character struct {
 	Name        string `json:"-"`
 	Roll        string `json:"roll"`
