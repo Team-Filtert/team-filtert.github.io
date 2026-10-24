@@ -1,0 +1,170 @@
+/* ── Card base ── */
+.card a {
+    color: var(--blue);
+    text-decoration: none;
+}
+
+.card a:hover {
+    text-decoration: underline;
+}
+
+.card:hover {
+    transform: scale(1.05);
+}
+
+.b_card img,
+.card img {
+    width: 4rem;
+    height: 4rem;
+    object-fit: contain;
+    transition:
+        width 0.3s 4rem,
+        height 0.3s 4rem;
+}
+
+.b_card {
+    padding: 0.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid white;
+    transition: 0.3s;
+    max-width: 20rem;
+}
+
+/*.card_h {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}*/
+
+.art-credit {
+    margin: 0.5rem 0 0;
+    font-size: 0.8rem;
+    opacity: 0.7;
+}
+
+/*.card-h {
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid white;
+}*/
+
+.card{
+    transition: 0.3s;
+    max-width: 15rem;
+    
+}
+
+.b_card {
+    color: white;
+    text-decoration: none;
+}
+
+.card-header {
+    cursor: pointer;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid white;
+
+    height: 15rem;
+    max-height: 15rem;
+}
+
+
+.bio-inner {
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  line-height: 1.7;
+  font-size: 0.9rem;
+}
+.tc-loading {
+  opacity: 0.5;
+  font-style: italic;
+}
+
+/* for better transitions */
+.card-titles h3,
+.card-titles p,
+.card-header,
+.card-header img {
+    transition: 0.3s;
+}
+
+
+/* expanded */
+.card.expanded {
+  max-width: 42rem;
+  padding: 2rem;
+  cursor: default;
+  transform: none;
+  transition: 0.3s;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid white;
+}
+
+.card_h,
+.card.expanded .card-header {
+    display: flex;
+    height: 7rem;
+    align-items: center;
+    gap: 0.85rem;
+    transition: 0.3s;
+    padding: 0rem;
+    border: none;
+    background: none;
+}
+
+.card.expanded .card-header img {
+  flex-shrink: 0;
+  width: 6.5rem;
+  height: 6.5rem;
+  transition:
+      width 0.3s 6.5rem,
+      height 0.3s 6.5rem;
+}
+
+.card_h .card-titles h3 {
+    margin: 0 0 0.2rem;
+    font-size: 1.5rem;
+}
+
+
+.card.expanded .card-titles h3 {
+  margin: 0 0 0.2rem;
+  font-size: 2rem;
+  transition: 0.3s;
+}
+
+.card_h .card-titles p,
+.card.expanded .card-titles p {
+    margin: 0;
+    font-size: 1.1rem;
+    opacity: 0.7;
+    transition: 0.3s;
+}
+ 
+.card.expanded .bio {
+    display: table-header-group;
+    max-height: 32rem;
+}
+
+.bio {
+  /* animation: shrink 0.3s; */
+  max-height: 0;
+  max-width: 0;
+  display: none;
+}
+
+.card-header:focus-visible {
+    outline: 2px solid var(--blue);
+    outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+    .b_card,
+    .card,
+    .card.expanded {
+        max-width: 100%;
+    }
+}
+
+

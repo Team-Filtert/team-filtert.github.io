@@ -1,0 +1,91 @@
+package pages
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	"github.com/Team-Filtert/Webside/templates"
+)
+
+templ UpdateDetail(c ssg.Ctx, u templates.Update) {
+	@templates.Layout(c, templates.Meta{
+		Title:       u.Title,
+		Description: u.Summary,
+		Type:        "article",
+	}, updateStyles()) {
+		<header class="post-header">
+			<div class="post-title"><h1>{ u.Title }</h1></div>
+			<div class="post-meta">
+				<div class="post-date">{ u.Date }</div>
+				Authors:
+				<div class="post-author">{ u.Authors }</div>
+			</div>
+			<br/>
+			if u.Summary != "" {
+				<div class="post-summary">{ u.Summary }</div>
+			}
+		</header>
+		<article class="post-body">
+			if u.Body != nil {
+				@u.Body(c)
+			}
+			<a href={ c.Link("updates/") } id="back-to-updates">&larr; Back to Updates</a>
+		</article>
+	}
+}
+
+templ updateStyles() {
+	<style>
+			#back-to-updates {
+				color: #eee;
+				text-decoration: none;
+				font-size: 1.3rem;
+			}
+
+			#back-to-updates:hover {
+				text-decoration: underline;
+			}
+
+			.post-body details {
+				margin: 1rem 0;
+			}
+
+			.post-body summary {
+				display: inline-block;
+				padding: 0.5rem 1rem;
+				border: 1px solid white;
+				background: rgba(25, 27, 38, 0.4);
+				color: var(--blue);
+				font-weight: bold;
+				cursor: pointer;
+				list-style: none;
+			}
+
+			.post-body summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.post-body summary::before {
+				content: "▶";
+				margin-right: 0.5rem;
+				font-size: 0.8em;
+			}
+
+			.post-body details[open] summary::before {
+				content: "▼";
+			}
+
+			.post-body summary::after {
+				content: " (click to expand)";
+				font-weight: normal;
+				opacity: 0.7;
+			}
+
+			.post-body details[open] summary::after {
+				content: " (click to collapse)";
+			}
+
+			.post-body summary:hover {
+				background: rgba(25, 27, 38, 1);
+				text-decoration: underline;
+			}
+		</style>
+}

@@ -1,0 +1,22 @@
+package templates
+
+import "github.com/LukasDerBaum42/astwerk/ssg"
+
+templ Nav(c ssg.Ctx) {
+	<nav>
+		<a href={ c.Link("") }>
+			<img
+				class="team-logo"
+				src={ c.Asset("img/team_filtered_logo.png") }
+				alt="Team Filtered"
+			/>
+		</a>
+		<div>
+			<a href={ c.Link("about/") }>About</a>
+			<a href={ c.Link("team/") }>Team</a>
+			<a href={ c.Link("updates/") }>Updates</a>
+			<a href={ c.Link("credits/") }>Credits</a>
+			<a href={ c.Link("contact/") }>Contacts</a>
+		</div>
+	</nav>
+}

@@ -1,0 +1,80 @@
+package templates
+
+import (
+	"log"
+	"strings"
+
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	templpkg "github.com/a-h/templ"
+)
+
+// Asset looks up id in the scanned meta.json index and renders its card.
+func Asset(c ssg.Ctx, id string) templpkg.Component {
+	return assetFor(c, id, false)
+}
+
+// Gallery renders several asset cards in the flex gallery used across the site.
+// It is the markdown entry point for devlogs: {{@gallery(["a.png", "b.png"])}}.
+templ Gallery(c ssg.Ctx, ids []string) {
+	<div class="gallery">
+		for _, id := range ids {
+			@Asset(c, id)
+		}
+	</div>
+}
+
+// AssetWithLicense is the credits-page variant: it adds the license below the
+// credit when the metadata has one.
+func AssetWithLicense(c ssg.Ctx, id string) templpkg.Component {
+	return assetFor(c, id, true)
+}
+
+// assetFor renders a card. A missing entry is a content bug, so it is logged
+// and rendered visibly instead of silently disappearing.
+func assetFor(c ssg.Ctx, id string, showLicense bool) templpkg.Component {
+	asset, ok := assetLibrary.Get(id)
+	if !ok {
+		log.Printf("asset %q not found in any meta.json", id)
+		return assetMissing(id, "not found")
+	}
+	return assetCard(c, asset, showLicense)
+}
+
+templ assetCard(c ssg.Ctx, asset AssetEntry, showLicense bool) {
+	<div class="gallery-item" data-tags={ strings.Join(asset.Tags, ",") }>
+		if asset.Type == "image" {
+			<img src={ c.Asset(asset.Path) } alt={ asset.Alt }/>
+		} else if asset.Type == "video" {
+			<video src={ c.Asset(asset.Path) } controls preload="metadata"></video>
+		} else {
+			<audio src={ c.Asset(asset.Path) } controls preload="metadata"></audio>
+		}
+		if asset.CreditName != "" {
+			<p>
+				by
+				if asset.Credit != "" {
+					<a href={ c.Link("credits/" + asset.Credit + "/") }>{ asset.CreditName }</a>
+				} else {
+					{ asset.CreditName }
+				}
+			</p>
+		}
+		if showLicense && asset.License != "" {
+			<p class="license">License: { asset.License }</p>
+		}
+		if showLicense && len(asset.Tags) > 0 {
+			<p class="asset-tags">
+				for _, tag := range asset.Tags {
+					<span class="asset-tag">{ tag }</span>
+				}
+			</p>
+		}
+	</div>
+}
+
+templ assetMissing(id string, reason string) {
+	<div class="gallery-item asset-error">
+		<p>Missing asset: { id }</p>
+		<p>{ reason }</p>
+	</div>
+}

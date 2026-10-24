@@ -1,0 +1,161 @@
+package templates
+
+import "github.com/LukasDerBaum42/astwerk/ssg"
+
+templ Footer(c ssg.Ctx) {
+	<footer>
+		<div class="footer-div">
+			<p class="footer-slogan">
+				Made by people with questionable sleep schedules.
+			</p>
+			<div class="footer-divider">
+				<div>
+					<a href={ c.Link("") }>Home Page</a>
+					<ul>
+						<li><a href={ c.Link("") + "#hero" }>Top of page</a></li>
+						<li><a href={ c.Link("") + "#about" }>About the game</a></li>
+						<li><a href={ c.Link("") + "#team" }>The team</a></li>
+						<li><a href={ c.Link("") + "#posters" }>Posters</a></li>
+						<li><a href={ c.Link("") + "#updates" }>Dev logs</a></li>
+					</ul>
+				</div>
+				<div>
+					<a href={ c.Link("contact/") }>Contact us at</a>
+					<ul>
+						<li>teamfilteredo7@gmail.com</li>
+						<li>
+							<a href="https://www.youtube.com/@TeamFiltered" target="_blank" rel="noopener noreferrer">YouTube</a>
+						</li>
+						<li>
+							<a href="https://www.x.com/@Teamfilteredf" target="_blank" rel="noopener noreferrer">Twitter</a>
+						</li>
+					</ul>
+				</div>
+				<div>
+					<a href={ c.Link("team/") }>Meet the team</a>
+					<ul>
+						<li><a href={ c.Link("team/") + "#member-wolfy" }>CountWolfy</a></li>
+						<li><a href={ c.Link("team/") + "#member-lukas" }>Lukas</a></li>
+						<li><a href={ c.Link("team/") + "#member-riko" }>Riko</a></li>
+						<li><a href={ c.Link("team/") + "#member-admiralensin" }>AdmiralEnsin</a></li>
+						<li><a href={ c.Link("team/") + "#member-komi" }>Komikron</a></li>
+						<li><a href={ c.Link("team/") + "#member-firearchers" }>Firearchers</a></li>
+					</ul>
+				</div>
+				<div class="footer-updates">
+					<a href={ c.Link("updates/") }>Updates Blog</a>
+					<ul>
+						for _, update := range footerUpdates {
+							<li>
+								<a href={ c.Link("updates/" + update.Slug + "/") }>{ update.Title }</a>
+							</li>
+						}
+					</ul>
+				</div>
+				<div>
+					<a href={ c.Link("credits/") }>Credits</a>
+					<ul>
+						for _, tag := range Assets().Tags() {
+							<li>
+								<a href={ c.Link("credits/") + "#" + tag }>{ tag }</a>
+							</li>
+						}
+					</ul>
+				</div>
+			</div>
+			<p class="footer-copyright">
+				<img
+					src={ c.Asset("img/team_filtered_logo.png") }
+					alt="Team Filtered logo"
+					style="width: 3rem;"
+				/> &copy; 2026 Team Filtered distributed under MIT License
+			</p>
+		</div>
+	</footer>
+}
+
+// FooterStyles is rendered at the bottom of the layout, after the markup it
+// styles. Templ styles are global, so keeping it in one place makes that
+// explicit.
+templ FooterStyles() {
+	<style>
+		footer {
+			padding-top: 2rem;
+		}
+		.footer-slogan {
+			background: #10101890;
+			border: 1px solid white;
+			padding: 1rem;
+		}
+		.footer-div {
+			background: #202028a0;
+			padding-left: 5rem;
+			padding-right: 5rem;
+			padding-top: 2rem;
+			padding-bottom: 0.5rem;
+		}
+		.footer-divider {
+			display: flex;
+			flex-wrap: wrap;
+			justify-content: center;
+			align-items: flex-start;
+		}
+
+		.footer-divider ul {
+			margin: 0;
+			padding: 0;
+			list-style: none;
+		}
+
+		.footer-divider a {
+			text-decoration: none;
+		}
+
+		.footer-divider li,
+		.footer-divider li a {
+			color: white;
+		}
+
+		.footer-divider li a:hover {
+			text-decoration: underline;
+		}
+
+		.footer-divider > div > a {
+			font-weight: bold;
+			font-size: 1.2rem;
+			color: #5050e0;
+		}
+
+		.footer-divider > * {
+			padding: 0 2rem;
+		}
+		.footer-updates {
+			max-width: 22rem;
+		}
+		.footer-copyright {
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			gap: 0.5rem;
+			text-align: center;
+			font-size: 0.8rem;
+		}
+
+		@media (max-width: 720px) {
+			.footer-div {
+				padding-left: 1rem;
+				padding-right: 1rem;
+			}
+
+			.footer-divider {
+				flex-direction: column;
+				align-items: center;
+				gap: 1rem;
+			}
+
+			.footer-divider > * {
+				padding: 0;
+			}
+		}
+	</style>
+}

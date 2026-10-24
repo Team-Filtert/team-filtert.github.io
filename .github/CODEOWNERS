@@ -1,4 +1,12 @@
 .github/** @KTrain5169
-package.json @KTrain5169
-pnpm-lock.yaml @KTrain5169
-astro.config.mjs @KTrain5169
+go.mod @KTrain5169
+go.sum @KTrain5169
+main.go @KTrain5169
+load.go @KTrain5169
+assets.go @KTrain5169
+changes.go @KTrain5169
+sitemap.go @KTrain5169
+templates/** @KTrain5169
+pages/** @KTrain5169
+style/** @KTrain5169
+scripts/** @KTrain5169

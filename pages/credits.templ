@@ -1,0 +1,213 @@
+package pages
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	"github.com/Team-Filtert/Webside/templates"
+)
+
+// CreditGroup is one member's section on the credits page. Title is only set
+// for assets that have no member credit.
+type CreditGroup struct {
+	Member templates.Member
+	Title  string
+	Assets []templates.AssetEntry
+}
+
+templ Credits(c ssg.Ctx, people []templates.Member, groups []CreditGroup, tags []string) {
+	@templates.Layout(c, templates.Meta{
+		Title:       "Credits",
+		Description: "Everyone with catalogued artwork for Team Filtered, grouped by contributor.",
+	}, creditsStyles()) {
+		<header class="story">
+			<h1>Credits</h1>
+			<p>The people behind the artwork, and everything they have made.</p>
+		</header>
+
+		<section>
+			<details class="credits-people-details">
+				<summary>Everyone with catalogued artwork ({ len(people) })</summary>
+				<div class="credits-people">
+					for _, member := range people {
+						<a href={ c.Link("credits/" + member.Slug + "/") }>{ member.Name }</a>
+					}
+				</div>
+			</details>
+		</section>
+
+		<section>
+			<h2>Artwork</h2>
+
+			<div class="credits-filters">
+				<button
+					type="button"
+					class="tag-filter active"
+					data-credit-filter=""
+					aria-pressed="true"
+				>
+					All
+				</button>
+				for _, tag := range tags {
+					<button
+						type="button"
+						class="tag-filter"
+						data-credit-filter={ tag }
+						aria-pressed="false"
+					>
+						{ tag }
+					</button>
+				}
+			</div>
+
+			<p class="credits-empty" data-credit-empty hidden>
+				No assets match this tag.
+			</p>
+
+			for _, group := range groups {
+				<section class="credits-member" data-credit-member>
+					if group.Member.Slug != "" {
+						<h2>
+							<a href={ c.Link("credits/" + group.Member.Slug + "/") }>{ group.Member.Name }</a>
+						</h2>
+					} else {
+						<h2>{ group.Title }</h2>
+					}
+
+					<div class="gallery">
+						for _, asset := range group.Assets {
+							@templates.AssetWithLicense(c, asset.ID)
+						}
+					</div>
+				</section>
+			}
+		</section>
+
+		<script type="module" src={ c.Asset("scripts/credits.js") }></script>
+	}
+}
+
+// creditsStyles is shared by the index and the per-member pages.
+templ creditsStyles() {
+	<style>
+		.credits-people-details {
+			max-width: 60rem;
+			margin: 0 auto;
+		}
+
+		.credits-people-details summary {
+			padding: 0.5rem;
+			color: var(--blue);
+			font-weight: bold;
+			text-align: center;
+			cursor: pointer;
+		}
+
+		.credits-people-details summary:hover {
+			text-decoration: underline;
+		}
+
+		.credits-people-details[open] summary {
+			margin-bottom: 1rem;
+		}
+
+		.credits-people {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.6rem;
+			justify-content: center;
+		}
+
+		.credits-people a {
+			padding: 0.35rem 0.8rem;
+			border: 1px solid rgba(255, 255, 255, 0.4);
+			border-radius: 999px;
+			color: var(--blue);
+			text-decoration: none;
+		}
+
+		.credits-people a:hover {
+			background: var(--pink);
+			color: white;
+		}
+
+		.credits-filters {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.5rem;
+			justify-content: center;
+			margin: 1rem 0 2rem;
+		}
+
+		.tag-filter {
+			padding: 0.35rem 0.8rem;
+			margin: 0;
+			background: rgba(255, 255, 255, 0.08);
+			border: 1px solid white;
+			border-radius: 999px;
+			color: white;
+			font-family: inherit;
+		}
+
+		.tag-filter:hover,
+		.tag-filter.active {
+			background: var(--pink);
+			transform: none;
+		}
+
+		.credits-member {
+			padding-top: 1rem;
+		}
+
+		.credits-member h2 a {
+			color: white;
+			text-decoration: none;
+		}
+
+		.credits-member h2 a:hover {
+			text-decoration: underline;
+		}
+
+		.credits-empty {
+			opacity: 0.7;
+		}
+
+		.credits-bio {
+			max-width: 60rem;
+			margin: 0 auto 2rem;
+			line-height: 1.7;
+		}
+
+		.credits-back {
+			margin-top: 2rem;
+		}
+
+		.credits-back a {
+			color: var(--blue);
+			text-decoration: none;
+		}
+
+		.credits-back a:hover {
+			text-decoration: underline;
+		}
+
+		.gallery-item .license {
+			font-size: 0.8rem;
+			opacity: 0.7;
+		}
+
+		.gallery-item .asset-tags {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.35rem;
+			justify-content: center;
+			margin: 0.35rem 0 0;
+		}
+
+		.gallery-item .asset-tag {
+			padding: 0.15rem 0.5rem;
+			border: 1px solid rgba(255, 255, 255, 0.4);
+			border-radius: 999px;
+			font-size: 0.75rem;
+			opacity: 0.8;
+		}
+	</style>
+}
