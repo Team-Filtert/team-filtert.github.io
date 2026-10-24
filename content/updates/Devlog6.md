@@ -22,6 +22,16 @@ The content didn't change, but a few things got nicer along the way:
 
 Deployment is still GitHub Pages, so nothing changes on your end. It just takes one fewer toolchain to get there.
 
+### Other changes to the site
+
+Together with the rewrite we went allong and made a few more chages to the site as well as adding new stuff.
+
+One of though changes was the redesing of the [About](/about/) page. The old one didn't really have much to show so the new one has much more content
+and the content is much better structured.
+
+Another addition is the new [Credits](/credits/) page with contains the credits for all the stuff on the site and Later the assets of the game.
+
+
 ## The Game progress
 
 We have made huge progress with the combat system, after porting most of the old system to the new codebase.

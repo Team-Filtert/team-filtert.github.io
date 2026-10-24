@@ -201,7 +201,6 @@ func creditsNode(people, credited []templates.Member, groups []pages.CreditGroup
 		Generate: func() map[string]ssg.Node {
 			children := make(map[string]ssg.Node, len(people))
 			for _, person := range people {
-				person := person
 				children[person.Slug] = ssg.Node{
 					Title:     "Credits: " + person.Name,
 					DependsOn: []string{"content/members", "public"},
@@ -223,7 +222,6 @@ func updatesNode(updates []templates.Update) ssg.Node {
 		Generate: func() map[string]ssg.Node {
 			children := make(map[string]ssg.Node, len(updates))
 			for _, u := range updates {
-				u := u
 				children[u.Slug] = ssg.Node{
 					Title:     u.Title,
 					DependsOn: []string{"content/updates", "public"},
