@@ -1,5 +1,6 @@
 +++
 chapter = 7
+logo = "Ch7.png"
 status = "Planned"
 +++
 

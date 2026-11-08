@@ -43,6 +43,7 @@ so keep selectors unique.
 - `templ generate` — regenerate the `*_templ.go` files after editing a `.templ`
 - `go run .` — build into `./build`
 - `go run . -serve` — serve `./build` on <http://localhost:8080>, rebuild and reload on change (drafts on)
+- `python3 serve.py` — serve `./build` on the LAN, for opening the site on your phone (no rebuild)
 - `go run . -drafts` — include devlogs marked as drafts
 - `go run . -changed PATH` — rebuild only what depends on `PATH` (repeatable)
 
@@ -51,6 +52,11 @@ one to leave running while working. The output directory is always `build/`,
 and serve mode always includes drafts. A normal build cleans `build/` first;
 `-changed` keeps it and rebuilds only the affected nodes. It uses an installed `templ` if available and
 falls back to `go run github.com/a-h/templ/cmd/templ@v0.3.1020` otherwise.
+
+`serve.py` is a plain static server for `build/` and prints the address to open
+on your phone; pass a port as the first argument to override `8080`. If the
+phone cannot connect, allow the port through the firewall, for example
+`sudo ufw allow from 192.168.178.0/24 to any port 8080:8089 proto tcp`.
 
 Edits under `content/`, `public/`, `style/` and `scripts/` rebuild only the
 nodes whose `DependsOn` matches them; anything else — Go, templ, or a deleted

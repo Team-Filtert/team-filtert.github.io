@@ -1,5 +1,6 @@
 +++
 chapter = 1
+logo = "Ch1.png"
 status = "Under Development"
 +++
 

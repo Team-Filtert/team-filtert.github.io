@@ -32,6 +32,7 @@ type updateFrontMatter struct {
 
 type ChapterFrontMatter struct {
 	ID     int    `toml:"chapter"`
+	Logo   string `toml:"logo"`
 	Status string `toml:"status"`
 }
 
@@ -113,6 +114,7 @@ func loadChapters() []pages.Chp {
 		chapters = append(chapters, pages.Chp{
 			Slug:   item.Slug,
 			ID:     fm.ID,
+			Logo:   fm.Logo,
 			Status: fm.Status,
 			Body:   item.Content,
 		})

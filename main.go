@@ -187,7 +187,7 @@ func buildSite(includeDrafts bool, changed []string) {
 func aboutNode(chapters []pages.Chp) ssg.Node {
 	return ssg.Node{
 		Title:     "About the game",
-		DependsOn: []string{"content/character.json", "content/chapters"},
+		DependsOn: []string{"content/character.json", "content/chapters", "public"},
 		Page:      func(c ssg.Ctx) templ.Component { return pages.About(c, chapters) },
 	}
 }

@@ -10,6 +10,7 @@ import (
 type Chp struct {
 	Slug   string
 	ID     int
+	Logo   string
 	Status string
 	Body   func(ssg.Ctx) templpkg.Component
 }
@@ -79,6 +80,9 @@ templ About(c ssg.Ctx, chapters []Chp) {
 					just keep in mind everything that’s labeled as “Under development” or “Planned” is subject to change.
 				</p>
 				@ChapterCards(c, chapters)
+				<p class="chapter-credit">
+					Chapter logos by <a href={ c.Link("credits/Allyphia/") }>Allyphia</a>
+				</p>
 			</section>
 			<section>
 				<h2>Development</h2>
@@ -142,6 +146,9 @@ templ ChapterCards(c ssg.Ctx, chapters []Chp) {
 		for _, chp := range chapters {
 			<article class="chapter-card" data-status={ chp.Status }>
 				<div class="chapter-head">
+					if asset, ok := templates.Assets().Get(chp.Logo); ok {
+						<img class="chp-logo" src={ c.Asset(asset.Path) } alt={ asset.Alt }/>
+					}
 					<h2>Chapter { chp.ID }</h2>
 					<span class="chapter-status">{ chp.Status }</span>
 				</div>
@@ -156,6 +163,20 @@ templ ChapterCards(c ssg.Ctx, chapters []Chp) {
 
 templ ChapterCardsCSS() {
 	<style>
+			.chp-logo {
+				flex: none;
+				width: 8rem;
+				height: 6rem;
+				object-fit: contain;
+			}
+
+			.chapter-credit {
+				margin: 1rem 0 0;
+				color: var(--muted);
+				font-size: 0.85rem;
+				text-align: center;
+			}
+    
 			.char-sec {
 				margin-top: 2rem;
 				font-size: 0.9rem;
@@ -244,7 +265,7 @@ templ ChapterCardsCSS() {
 			}
 
 			.chapter-status {
-				margin-left: 0;
+				margin-left: auto;
 				padding: 0.25rem 0.6rem;
 				background: rgba(255, 255, 255, 0.06);
 				border: 1px solid var(--border);
