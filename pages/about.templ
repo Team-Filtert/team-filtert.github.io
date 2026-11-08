@@ -401,6 +401,33 @@ templ ChapterCardsCSS() {
 				.chapter-card {
 					padding: 1rem;
 				}
+
+				.chapter-head {
+					display: grid;
+					grid-template-columns: auto 1fr;
+					grid-template-areas:
+						"logo title"
+						"logo status";
+					align-items: center;
+					gap: 0.35rem 0.75rem;
+				}
+
+				.chp-logo {
+					grid-area: logo;
+					width: 3.5rem;
+					height: 3.5rem;
+				}
+
+				.chapter-head h2 {
+					grid-area: title;
+					font-size: 1.05rem;
+				}
+
+				.chapter-status {
+					grid-area: status;
+					justify-self: start;
+					margin-left: 0;
+				}
 			}
 		</style>
 }
