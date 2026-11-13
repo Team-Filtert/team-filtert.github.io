@@ -7,7 +7,6 @@ on:
             - '**/*.js'
             - '**/*.cjs'
             - '**/*.mjs'
-            - '!astro.config.mjs'
 
 jobs:
     js-comment:

@@ -1,0 +1,44 @@
+{
+  "forrest.png": {
+    "credit": "wannu",
+    "license": "",
+    "type": "image",
+    "tags": ["concept-art"],
+    "alt": "Forest concept art"
+  },
+  "tutel_town.png": {
+    "credit": "wannu",
+    "license": "",
+    "type": "image",
+    "tags": ["concept-art"],
+    "alt": "Tutel Town concept art"
+  },
+  "tiles.png": {
+    "credit": "mak",
+    "license": "",
+    "type": "image",
+    "tags": ["concept-art"],
+    "alt": "Tiles concept art"
+  },
+  "neuro-propaganda.png": {
+    "credit": "viann",
+    "license": "",
+    "type": "image",
+    "tags": ["propaganda"],
+    "alt": "Neuro propaganda poster"
+  },
+  "wolfy_propaganda.jpg": {
+    "credit": "ollie",
+    "license": "",
+    "type": "image",
+    "tags": ["propaganda"],
+    "alt": "Wolfy propaganda poster"
+  },
+  "evil_propaganda.jpg": {
+    "credit": "ollie",
+    "license": "",
+    "type": "image",
+    "tags": ["propaganda"],
+    "alt": "Evil propaganda poster"
+  }
+}

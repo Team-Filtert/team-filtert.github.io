@@ -1,11 +1,3 @@
 {
-    "markdown.validate.enabled": false,
-    "json.schemas": [
-        {
-            "url": ".astro/collections/departments.schema.json",
-            "fileMatch": [
-                "src/data/departments.json"
-            ]
-        }
-    ]
+    "markdown.validate.enabled": false
 }

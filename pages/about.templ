@@ -1,0 +1,433 @@
+package pages
+
+import (
+	"github.com/LukasDerBaum42/astwerk/content"
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	"github.com/Team-Filtert/Webside/templates"
+	templpkg "github.com/a-h/templ"
+)
+
+type Chp struct {
+	Slug   string
+	ID     int
+	Logo   string
+	Status string
+	Body   func(ssg.Ctx) templpkg.Component
+}
+
+var Chars = content.MustLoadData[map[string]templates.Character]("content/character.json")
+
+templ About(c ssg.Ctx, chapters []Chp) {
+	@templates.Layout(c, templates.Meta{
+		Title:       "About the game",
+		Description: "The story, characters, and world of Neuro-sama: The Good, The Evil And The Filtered.",
+	}, nil) {
+		<div class="story">
+			<section>
+				<h1>About the game</h1>
+				<p>
+					Neuro-sama: The Good, The Evil And The Filtered is an ambitious JRPG
+					fan project featuring Neuro-sama and all of your favourite VTubers.
+					Nere (the embodiment of the twins' filter) has been let loose by a
+					drunk Vedal and is going on a rampage filtering everyone in the
+					Neuroverse! The twins set off across 7 unique worlds to try and stop
+					Nere from filtering all of their friends. Some VTubers are acting
+					strange, perhaps this is a side effect of Nere's corruption? Find
+					out the full story as more content gets released!
+				</p>
+				<p>
+					The game is still in development! Anything described here is subject to change!
+					It's also open-source, and we're always happy to have new people join us,
+					whether you write, draw, compose, program, design, or just want to help out.
+					If that sounds like you, come say hi on our
+					<a href="https://discord.gg/nAXzxMY9gT">Discord</a>
+					or check out our
+					<a href="https://github.com/Team-Filtert">GitHub</a>.
+				</p>
+			</section>
+			<section>
+				<h2>The Story</h2>
+				<p>
+					Nere was never supposed to get loose, but now the filter is spreading across the Neuroverse
+					and the twins are the only ones who can stop it. Along the way they'll meet plenty of VTubers,
+					some who join them on their journey, and some who have already been filtered will stand in their way.
+				</p>
+				@CastGallery(c, []string{"Neuro", "Evil", "Nere", "Vedal"})
+			</section>
+			<section>
+				<h2>Game Play</h2>
+				<p>
+					The game is a turn-based JRPG, and combat gives you two ways to play:
+				</p>
+				<ul>
+					<li>Active: Time your inputs to deal extra damage, at the risk of missing.</li>
+					<li>Relaxed: React passively and focus on strategy, with more predictable results.</li>
+				</ul>
+				<p>
+					In both modes you choose what each party member does and who they target. You'll use normal actions,
+					combo moves with other party members, ultimate moves that charge up over time, items and blocks.
+					Exploration takes the twins across seven different worlds, with side quests, shops and an inventory
+					system planned as we keep working on the game.
+				</p>
+			</section>
+			<section class="chapters">
+				<h2>Chapters</h2>
+				<p>
+					The game is planned as eight chapters across seven worlds, each with its own cast of characters and challenges.
+					Chapter 1 is the demo and is currently in development; the rest are planned.
+					We have made Chapter cards that contain most of the important content about that chapter
+					though we’re keeping most of the stuff filtered for now. If you really want to you can look at the spoilers,
+					just keep in mind everything that’s labeled as “Under development” or “Planned” is subject to change.
+				</p>
+				@ChapterCards(c, chapters)
+				<p class="chapter-credit">
+					Chapter logos by <a href={ c.Link("credits/Allyphia/") }>Allyphia</a>
+				</p>
+			</section>
+			<section>
+				<h2>Development</h2>
+				<p>
+					Chapter 1 is the demo and is still in development. The later chapters and systems described above are planned,
+					but not finished yet. We'll share more when they're ready, so please stay tuned for more updates!
+				</p>
+			</section>
+		</div>
+	}
+}
+
+func characterOrFiltered(name string) templates.Character {
+	char, ok := Chars[name]
+	if !ok {
+		return templates.Character{Name: name, Hiden: true}
+	}
+	char.Name = name
+	return char
+}
+
+templ CastGallery(c ssg.Ctx, keys []string) {
+	<div class="char-sec">
+		<h2>Characters</h2>
+		<div class="characters">
+			for _, id := range keys {
+				@CharacterCard(c, characterOrFiltered(id))
+			}
+		</div>
+	</div>
+}
+
+templ CharacterCard(c ssg.Ctx, char templates.Character) {
+	if char.Hiden {
+		<div class="b_card">
+			<div class="card_h">
+				<img src={ c.Asset("img/characters/filtered.png") } alt="Filtered character art"/>
+				<div class="card-titles">
+					<h3>Filtered</h3>
+					<p>Filtered</p>
+				</div>
+			</div>
+			<p>Filtered</p>
+		</div>
+	} else {
+		<div class="b_card">
+			<div class="card_h">
+				<img src={ c.Asset(char.Pfp) } alt={ char.Name + " character art" }/>
+				<div class="card-titles">
+					<h3>{ char.Name }</h3>
+					<p>{ char.Roll }</p>
+				</div>
+			</div>
+			<p>{ char.Description }</p>
+		</div>
+	}
+}
+
+templ ChapterCards(c ssg.Ctx, chapters []Chp) {
+	<div class="chapter-list">
+		for _, chp := range chapters {
+			<article class="chapter-card" data-status={ chp.Status }>
+				<div class="chapter-head">
+					if asset, ok := templates.Assets().Get(chp.Logo); ok {
+						<img class="chp-logo" src={ c.Asset(asset.Path) } alt={ asset.Alt }/>
+					}
+					<h2>Chapter { chp.ID }</h2>
+					<span class="chapter-status">{ chp.Status }</span>
+				</div>
+				<div class="chapter-body">
+					@templates.MarkdownBody(c, chp.Body)
+				</div>
+			</article>
+		}
+	</div>
+	@ChapterCardsCSS()
+}
+
+templ ChapterCardsCSS() {
+	<style>
+			.chp-logo {
+				flex: none;
+				width: 8rem;
+				height: 6rem;
+				object-fit: contain;
+			}
+
+			.chapter-credit {
+				margin: 1rem 0 0;
+				color: var(--muted);
+				font-size: 0.85rem;
+				text-align: center;
+			}
+    
+			.char-sec {
+				margin-top: 2rem;
+				font-size: 0.9rem;
+			}
+
+			.char-sec > h2 {
+				color: var(--mint);
+			}
+
+			.char-sec > h2::before {
+				content: "";
+				display: inline-block;
+				width: 0.5em;
+				height: 0.5em;
+				margin-right: 0.6em;
+				background: linear-gradient(135deg, var(--green), var(--mint));
+				transform: translateY(-0.08em) rotate(45deg);
+			}
+
+			.char-sec .characters {
+				grid-template-columns: repeat(
+					auto-fit,
+					minmax(min(100%, 14rem), 1fr)
+				);
+			}
+
+
+			/* Main cast cards: centre the portrait, name and role. */
+			.story .b_card {
+				align-items: center;
+				text-align: center;
+			}
+
+			.story .card_h {
+				flex-direction: column;
+				justify-content: center;
+				width: 100%;
+				margin-bottom: 0.75rem;
+				text-align: center;
+			}
+
+			.story .b_card img {
+				width: 6rem;
+				height: 6rem;
+				border-radius: 0;
+			}
+
+			.story .b_card > p {
+				font-size: 0.9rem;
+			}
+
+			.chapter-list {
+				display: flex;
+				flex-direction: column;
+				gap: 1rem;
+				margin-top: 1.5rem;
+			}
+
+			.chapter-card {
+				display: flex;
+				flex-direction: column;
+				padding: 1.25rem;
+				background: var(--bg-deep);
+				border: 1px solid var(--border-strong);
+				transition:
+					transform 0.2s ease,
+					border-color 0.2s ease;
+			}
+
+			.chapter-card:hover {
+				transform: translateY(-2px);
+				border-color: var(--green);
+			}
+
+			.chapter-head {
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 0.6rem 1rem;
+				margin-bottom: 0.75rem;
+			}
+
+			.chapter-head h2 {
+				margin: 0;
+				font-size: 1.4rem;
+			}
+
+			.chapter-status {
+				margin-left: auto;
+				padding: 0.25rem 0.6rem;
+				background: rgba(255, 255, 255, 0.06);
+				border: 1px solid var(--border);
+				border-radius: 0;
+				color: var(--muted);
+				font-family: var(--font-pixel);
+				font-size: 0.55rem;
+				line-height: 1.8;
+				text-transform: uppercase;
+			}
+
+			.chapter-card[data-status="Under Development"] .chapter-status {
+				background: var(--mint);
+				border-color: transparent;
+				color: #062114;
+			}
+
+			.chapter-card[data-status="Planned"] .chapter-status {
+				background: var(--lime);
+				border-color: transparent;
+				color: #1a2608;
+			}
+
+			.chapter-body {
+				color: var(--text-soft);
+				font-size: 0.95rem;
+			}
+
+			.chapter-body > p,
+			.chapter-body details > p {
+				max-width: none;
+			}
+
+			.chapter-body > p:first-child {
+				margin-top: 0;
+			}
+
+			.chapter-body details {
+				margin-top: 1rem;
+				padding: 1rem;
+				background: transparent;
+				border: 1px dashed var(--border-strong);
+			}
+
+			.chapter-body summary {
+				display: inline-block;
+				color: var(--text);
+				font-family: var(--font-pixel);
+				font-size: 0.7rem;
+				font-weight: 400;
+				line-height: 1.8;
+				list-style: none;
+				cursor: pointer;
+			}
+
+			.chapter-body summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.chapter-body summary::before {
+				content: "▶";
+				margin-right: 0.45rem;
+				color: var(--green);
+				font-family: var(--font-body);
+				font-size: 0.7em;
+			}
+
+			.chapter-body details[open] summary::before {
+				content: "▼";
+			}
+
+			.chapter-body summary:hover {
+				color: var(--green);
+			}
+
+			.chapter-body details[open] summary {
+				margin-bottom: 0.75rem;
+			}
+
+			.chapter-body details > p {
+				margin: 0 0 0.75rem;
+			}
+
+			/* Only the placeholder itself uses the retro font. */
+			.chapter-body .filtered {
+				display: block;
+				margin: 0;
+				padding: 1rem;
+				color: var(--green);
+				font-family: var(--font-pixel);
+				font-size: 1.6rem;
+				font-style: italic;
+				line-height: 1.6;
+				letter-spacing: 0.1em;
+				text-align: center;
+				text-transform: uppercase;
+			}
+
+			/* Compact cast row inside chapter cards. */
+			.chapter-body .characters {
+				grid-template-columns: repeat(
+					auto-fit,
+					minmax(min(100%, 9rem), 1fr)
+				);
+				gap: 0.75rem;
+				margin: 1rem 0;
+			}
+
+			.chapter-body .b_card {
+				padding: 0.85rem;
+				font-size: 0.85rem;
+			}
+
+			.chapter-body .card_h {
+				margin-bottom: 0.5rem;
+			}
+
+			.chapter-body .b_card img {
+				width: 3.5rem;
+				height: 3.5rem;
+				border-radius: 0;
+			}
+
+			.chapter-body .card_h .card-titles h3 {
+				font-size: 1rem;
+			}
+
+			.chapter-body .card_h .card-titles p {
+				font-size: 0.8rem;
+			}
+
+			@media (max-width: 720px) {
+				.chapter-card {
+					padding: 1rem;
+				}
+
+				.chapter-head {
+					display: grid;
+					grid-template-columns: auto 1fr;
+					grid-template-areas:
+						"logo title"
+						"logo status";
+					align-items: center;
+					gap: 0.35rem 0.75rem;
+				}
+
+				.chp-logo {
+					grid-area: logo;
+					width: 3.5rem;
+					height: 3.5rem;
+				}
+
+				.chapter-head h2 {
+					grid-area: title;
+					font-size: 1.05rem;
+				}
+
+				.chapter-status {
+					grid-area: status;
+					justify-self: start;
+					margin-left: 0;
+				}
+			}
+		</style>
+}
