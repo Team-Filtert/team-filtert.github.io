@@ -67,7 +67,6 @@ templ Footer(c ssg.Ctx) {
 				<img
 					src={ c.Asset("img/team_filtered_logo.png") }
 					alt="Team Filtered logo"
-					style="width: 3rem;"
 				/> &copy; 2026 Team Filtered distributed under MIT License
 			</p>
 		</div>
@@ -80,81 +79,116 @@ templ Footer(c ssg.Ctx) {
 templ FooterStyles() {
 	<style>
 		footer {
-			padding-top: 2rem;
+			position: relative;
+			z-index: 1;
+			margin-top: clamp(3rem, 7vw, 6rem);
+			border-top: 1px solid var(--border);
+			background: var(--surface);
 		}
-		.footer-slogan {
-			background: #10101890;
-			border: 1px solid white;
-			padding: 1rem;
-		}
+
 		.footer-div {
-			background: #202028a0;
-			padding-left: 5rem;
-			padding-right: 5rem;
-			padding-top: 2rem;
-			padding-bottom: 0.5rem;
+			width: 100%;
+			padding: clamp(2rem, 4vw, 3rem) clamp(1rem, 4vw, 3rem) 1.5rem;
 		}
+
+		.footer-slogan {
+			width: fit-content;
+			max-width: 100%;
+			margin: 0 auto clamp(1.75rem, 4vw, 2.5rem);
+			padding: 0.5rem 1.1rem;
+			border-left: 3px solid var(--green);
+			border-right: 3px solid var(--green);
+			background: rgba(95, 232, 148, 0.08);
+			color: var(--mint);
+			font-family: var(--font-pixel);
+			font-size: clamp(0.5rem, 1.2vw, 0.65rem);
+			line-height: 2;
+			text-align: center;
+			text-shadow: 0 0 1rem rgba(95, 232, 148, 0.45);
+		}
+
 		.footer-divider {
-			display: flex;
-			flex-wrap: wrap;
-			justify-content: center;
-			align-items: flex-start;
+			display: grid;
+			grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+			align-items: start;
+			gap: 2rem;
+			padding-bottom: 2rem;
+			border-bottom: 1px solid var(--border);
 		}
 
 		.footer-divider ul {
-			margin: 0;
+			display: flex;
+			flex-direction: column;
+			gap: 0.35rem;
+			margin: 0.65rem 0 0;
 			padding: 0;
 			list-style: none;
 		}
 
-		.footer-divider a {
+		.footer-divider > div > a {
+			display: block;
+			color: var(--green);
+			font-family: var(--font-display);
+			font-size: 1.15rem;
+			font-weight: 700;
 			text-decoration: none;
+		}
+
+		.footer-divider > div > a:hover {
+			color: var(--mint);
 		}
 
 		.footer-divider li,
 		.footer-divider li a {
-			color: white;
+			color: var(--muted);
+			font-size: 0.88rem;
+			line-height: 1.5;
+		}
+
+		.footer-divider li a {
+			text-decoration: none;
+			transition: color 0.2s ease;
 		}
 
 		.footer-divider li a:hover {
-			text-decoration: underline;
+			color: var(--green);
+			text-decoration: none;
 		}
 
-		.footer-divider > div > a {
-			font-weight: bold;
-			font-size: 1.2rem;
-			color: #5050e0;
-		}
-
-		.footer-divider > * {
-			padding: 0 2rem;
-		}
 		.footer-updates {
-			max-width: 22rem;
+			max-width: none;
 		}
+
 		.footer-copyright {
 			display: flex;
-			justify-content: center;
 			align-items: center;
-			gap: 0.5rem;
+			justify-content: center;
+			gap: 0.6rem;
+			margin: 1.5rem 0 0;
+			color: var(--muted);
+			font-size: 0.78rem;
 			text-align: center;
-			font-size: 0.8rem;
+		}
+
+		.footer-copyright img {
+			width: 2.5rem;
+			height: auto;
 		}
 
 		@media (max-width: 720px) {
-			.footer-div {
-				padding-left: 1rem;
-				padding-right: 1rem;
-			}
-
 			.footer-divider {
-				flex-direction: column;
-				align-items: center;
-				gap: 1rem;
+				grid-template-columns: 1fr 1fr;
+				gap: 1.5rem;
+			}
+		}
+
+		@media (max-width: 480px) {
+			.footer-divider {
+				grid-template-columns: 1fr;
 			}
 
-			.footer-divider > * {
-				padding: 0;
+			.footer-copyright {
+				flex-direction: column;
 			}
 		}
 	</style>

@@ -1,9 +1,10 @@
 +++
 name = "Anzeal"
-description = "Ex Head of the Art Department"
+description = "Former Head of the Art Department"
 image = "/img/the_team/Anzeal.jpg"
-departments = ["art", "translation"]
+departments = ["art"]
 language = "French"
+former = true
 +++
 
 

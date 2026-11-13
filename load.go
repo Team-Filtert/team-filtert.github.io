@@ -20,6 +20,7 @@ type memberFrontMatter struct {
 	Image       string   `toml:"image"`
 	Departments []string `toml:"departments"`
 	Language    string   `toml:"language"`
+	Former      bool     `toml:"former"`
 }
 
 type updateFrontMatter struct {
@@ -31,7 +32,15 @@ type updateFrontMatter struct {
 
 type ChapterFrontMatter struct {
 	ID     int    `toml:"chapter"`
+	Logo   string `toml:"logo"`
 	Status string `toml:"status"`
+}
+
+type contributor struct {
+	Name        string `json:"name"`
+	Role        string `json:"role"`
+	Description string `json:"description"`
+	Pfp         string `json:"pfp"`
 }
 
 // department is one section on the team page. The order here is the order the
@@ -65,6 +74,10 @@ func newSiteLoader() *content.Loader {
 		WithRenderOptions(content.WithExternalLinks("_blank"))
 }
 
+func loadContributors() map[string]contributor {
+	return content.MustLoadData[map[string]contributor]("content/contributors.json")
+}
+
 func loadMembers() map[string]templates.Member {
 	collection := content.MustLoadCollectionWith[memberFrontMatter](siteLoader, "content/members")
 
@@ -81,6 +94,7 @@ func loadMembers() map[string]templates.Member {
 			Image:       fm.Image,
 			Language:    fm.Language,
 			Departments: fm.Departments,
+			Former:      fm.Former,
 			Body:        item.Content,
 		}
 	}
@@ -100,6 +114,7 @@ func loadChapters() []pages.Chp {
 		chapters = append(chapters, pages.Chp{
 			Slug:   item.Slug,
 			ID:     fm.ID,
+			Logo:   fm.Logo,
 			Status: fm.Status,
 			Body:   item.Content,
 		})
@@ -202,10 +217,13 @@ func sortedMembers(members map[string]templates.Member) []templates.Member {
 }
 
 func teamGroups(team []templates.Member) []pages.TeamGroup {
-	groups := make([]pages.TeamGroup, 0, len(departments))
+	groups := make([]pages.TeamGroup, 0, len(departments)+1)
 	for _, d := range departments {
 		var inDepartment []templates.Member
 		for _, m := range team {
+			if m.Former {
+				continue
+			}
 			for _, id := range m.Departments {
 				if id == d.ID {
 					inDepartment = append(inDepartment, m)
@@ -220,33 +238,74 @@ func teamGroups(team []templates.Member) []pages.TeamGroup {
 			ShowLanguage: d.ShowLanguage,
 		})
 	}
+
+	var former []templates.Member
+	for _, m := range team {
+		if m.Former {
+			former = append(former, m)
+		}
+	}
+	if len(former) > 0 {
+		groups = append(groups, pages.TeamGroup{
+			Title:   "Former Members",
+			Key:     "former",
+			Members: former,
+		})
+	}
+
 	return groups
 }
 
-// creditPeople returns the team plus any external credit referenced by asset
-// metadata. External people only have a slug and a display name; their page
-// shows the same no-bio fallback as a team member without a bio.
-func creditPeople(team []templates.Member, assets []templates.AssetEntry) []templates.Member {
+// creditPeople returns the team plus every external credit: asset credits that
+// are not team members, and entries from content/contributors.json. External
+// people only have a slug, display name, role and optional description.
+func creditPeople(team []templates.Member, assets []templates.AssetEntry, contributors map[string]contributor) []templates.Member {
 	people := append([]templates.Member(nil), team...)
 	seen := make(map[string]bool, len(people))
 	for _, member := range people {
 		seen[member.Slug] = true
 	}
 
+	add := func(slug, fallbackName string) {
+		if slug == "" || seen[slug] {
+			return
+		}
+		seen[slug] = true
+		people = append(people, externalMember(slug, fallbackName, contributors[slug]))
+	}
+
 	for _, asset := range assets {
-		if asset.Credit == "" || seen[asset.Credit] {
-			continue
-		}
-		seen[asset.Credit] = true
-		name := asset.CreditName
-		if name == "" {
-			name = asset.Credit
-		}
-		people = append(people, templates.Member{Slug: asset.Credit, Name: name})
+		add(asset.Credit, asset.CreditName)
+	}
+	for slug := range contributors {
+		add(slug, "")
 	}
 
 	sort.Slice(people, func(i, j int) bool { return people[i].Slug < people[j].Slug })
 	return people
+}
+
+func externalMember(slug, fallbackName string, c contributor) templates.Member {
+	name := c.Name
+	if name == "" {
+		name = fallbackName
+	}
+	if name == "" {
+		name = slug
+	}
+
+	role := c.Role
+	if role == "" {
+		role = "Contributor"
+	}
+
+	return templates.Member{
+		Slug:        slug,
+		Name:        name,
+		Description: role,
+		Image:       c.Pfp,
+		Body:        templates.TextBody(c.Description),
+	}
 }
 
 // buildCreditGroups groups assets by their credit ID. People without

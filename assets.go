@@ -29,7 +29,7 @@ var creditID = regexp.MustCompile(`^[A-Za-z0-9][A-Za-z0-9._-]*$`)
 // loadAssets scans public/ for meta.json/meta.toml sidecars and combines every
 // catalogued file into one global, ID-indexed lookup. The asset's URL comes
 // from the scanner, so it is always relative to the public root.
-func loadAssets(members map[string]templates.Member) templates.AssetLibrary {
+func loadAssets(members map[string]templates.Member, contributors map[string]contributor) templates.AssetLibrary {
 	entries, err := assets.LoadTree[assetMeta](publicDir, assets.Options[assetMeta]{
 		RequireMeta: true,
 	})
@@ -58,6 +58,8 @@ func loadAssets(members map[string]templates.Member) templates.AssetLibrary {
 		creditName := meta.CreditName
 		if member, ok := members[meta.Credit]; ok {
 			creditName = member.Name
+		} else if contributor, ok := contributors[meta.Credit]; ok && contributor.Name != "" {
+			creditName = contributor.Name
 		} else if creditName == "" {
 			creditName = meta.Credit
 		}

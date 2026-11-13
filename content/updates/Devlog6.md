@@ -1,6 +1,6 @@
 +++
 title = "Devlog #6: Yet another rewrite..."
-summary = "I did another rewrite of the website. We made progress on the actuall game."
+summary = "I did another rewrite of the website. We made progress on the actual game."
 author = ["LukasDerBaum"]
 published = "draft"
 +++
@@ -11,7 +11,7 @@ Yes, I know. Another rewrite. This time it's the website (again), not the game.
 
 The site has been running on [Astro](https://astro.build) since [Devlog #2](/updates/Devlog2/), and that was a big step up from the original setup. But it still meant keeping a whole Node toolchain around to build a mostly static site, and every small change went through pnpm and a pile of dependencies.
 
-So the site is now built with [astwerk](https://github.com/LukasDerBaum42/astwerk), my own static site generator written in Go. Pages are Go and templ components, devlogs and bios are still Markdown with TOML front matter, and `go run .` builds the whole thing. Astro and pnpm are gone. The few interactive bits are still TypeScript, because I'm not rewriting the starfield in Go again (yes, I did do that for my own website, and it's a bad idea).
+So the site is now built with [astwerk](https://github.com/LukasDerBaum42/astwerk), my own static site generator written in Go. Pages are Go and templ components, devlogs and bios are still Markdown with TOML front matter, and `go run .` builds the whole thing. Astro and pnpm are gone. The few interactive bits are still written in TypeScript, because I'm not rewriting the starfield in Go again (yes, I did do that for my own website, and it's a bad idea).
 
 The content didn't change, but a few things got nicer along the way:
 
@@ -24,18 +24,37 @@ Deployment is still GitHub Pages, so nothing changes on your end. It just takes 
 
 ### Other changes to the site
 
-Together with the rewrite we went allong and made a few more chages to the site as well as adding new stuff.
+Together with the rewrite we also made a few more changes to the site and added some new stuff.
 
-One of though changes was the redesing of the [About](/about/) page. The old one didn't really have much to show so the new one has much more content
-and the content is much better structured.
+The first thing you'll notice is that the site got a new look. The old blue and pink palette is gone, and everything is now built around green and mint on a darker background, with reworked cards and footer to match. The pixel font is still around for the small accents, because some things should stay.
 
-Another addition is the new [Credits](/credits/) page with contains the credits for all the stuff on the site and Later the assets of the game.
+One of those changes was the redesign of the [About](/about/) page. The old one didn't really have much to show, so the new one has much more content and it's much better structured.
 
+Another addition is the new [Credits](/credits/) page, which credits everything on the site and, later, the assets of the game as well. Everyone with artwork has their own page, and the names on the artwork cards and in the footer link straight to it, so you can go from a poster to everything that person made. The [Team](/team/) page has a section for former members now, and people who were never part of the team, like a commissioned artist, only show up in the credits with a short description of what they did.
 
-## The Game progress
+## The game progress
 
 We have made huge progress with the combat system, after porting most of the old system to the new codebase.
-Yes in the end the rewrite the the game wasn't the best idea but we're getting close to something where we can actually so something off.
+
+We went from basically nothing, apart from a UI that mostly worked, to actually playable combat.
+The characters appear on the battlefield, you can select attack, the QTEs work, the enemies have AI that kind of works, and a lot more.
+We also have some halfway decent documentation now, though it could use some more cleanup.
+
+Though there is one big caveat to all of this...
+To get all of this working I made heavy use of AI agents. I know, shame on me, but it was the best I could do.
+Some of our team were about to give up and go back to the old build from before the rewrite, losing all the progress we had made.
+So the choice was either roll back and lose that progress, or use AI to port the old stuff.
+
+If you don't like AI code that's fine, but I see AI as a useful tool for coding. If you have a problem with that, go complain to the tutel. (btw I hate AI image gen as much as everyone else here)
+
+
+## The official announcement video
+
+If you're reading this, our official announcement video is out!
+
+You can check it out [here](Link needs to be added)
+
+
 
 ## Astwerk
 
@@ -58,7 +77,7 @@ Markdown can also call templ components now, which is how the galleries in earli
 
 It's not trying to be Astro or Hugo. It's a small, opinionated generator shaped around my personal preferences. The source is on [GitHub](https://github.com/LukasDerBaum42/astwerk) if you want to poke at it.
 
-There are also some other cool features planned, some of which will live in their own separate addon repos:
+There are also some other cool features planned, some of which will live in their own separate add-on repos:
 
 - A theming system with its own data language
 - A system that lets you write Go for the front end

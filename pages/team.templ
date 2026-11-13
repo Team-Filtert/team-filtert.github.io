@@ -30,10 +30,9 @@ templ Team(c ssg.Ctx, heads []templates.Member, groups []TeamGroup) {
 				They are sorted by departments but not necessarily by role.
 			</p>
 			<p>
-    			You can also have a look at the <a href={ c.Link("credits/") }>creadits here</a>
+				You can also have a look at the <a href={ c.Link("credits/") }>creadits here</a>
 			</p>
 		</header>
-
 		<section>
 			<h2>Meet the Team leaders</h2>
 			<div class="characters">
@@ -42,7 +41,6 @@ templ Team(c ssg.Ctx, heads []templates.Member, groups []TeamGroup) {
 				}
 			</div>
 		</section>
-
 		for _, group := range groups {
 			<section>
 				<h2>{ group.Title }</h2>
@@ -53,7 +51,6 @@ templ Team(c ssg.Ctx, heads []templates.Member, groups []TeamGroup) {
 				</div>
 			</section>
 		}
-
 		<script type="module" src={ c.Asset("scripts/team.js") }></script>
 	}
 }
