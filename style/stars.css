@@ -1,0 +1,95 @@
+#stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.star,
+.star-middle,
+.star-inner {
+    position: absolute;
+    border-radius: 50%;
+}
+
+.star {
+    background: white;
+    opacity: 1;
+    animation: drift_side 8s infinite ease-in-out;
+}
+
+.star-middle {
+    background: white;
+    opacity: 1;
+    animation: drift_up 6s infinite ease-in-out;
+}
+
+.star-inner {
+    background: white;
+    opacity: 0.6;
+    animation: twinkle 4s infinite ease-in-out;
+}
+
+@keyframes twinkle {
+    0% {
+        opacity: 0.35;
+        transform: scale(1);
+    }
+
+    50% {
+        opacity: 1;
+        transform: scale(1.25);
+    }
+
+    100% {
+        opacity: 0.35;
+        transform: scale(1);
+    }
+}
+
+@keyframes drift_up {
+    0% {
+        transform: translateY(0);
+    }
+
+    25% {
+        transform: translateY(-30px);
+    }
+
+    50% {
+        transform: translateY(0);
+    }
+
+    75% {
+        transform: translateY(15px);
+    }
+
+    100% {
+        transform: translateY(0);
+    }
+}
+
+@keyframes drift_side {
+    0% {
+        transform: translateX(0);
+    }
+
+    25% {
+        transform: translateX(-40px);
+    }
+
+    50% {
+        transform: translateX(0);
+    }
+
+    75% {
+        transform: translateX(20px);
+    }
+
+    100% {
+        transform: translateX(0);
+    }
+}

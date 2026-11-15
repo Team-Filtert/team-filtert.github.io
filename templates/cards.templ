@@ -1,0 +1,69 @@
+package templates
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	templpkg "github.com/a-h/templ"
+)
+
+// MemberCard is the expandable card used on the team page. showLanguage is
+// only set for the translation section. key keeps ids unique when a member
+// appears in both the leader and department sections; anchor is set only for
+// the leader card so #member-<slug> links always find the same one.
+templ MemberCard(c ssg.Ctx, m Member, showLanguage bool, key string, anchor bool) {
+	<div class="card" id={ memberCardID(m.Slug, key, anchor) }>
+		<div
+			class="card-header"
+			role="button"
+			tabindex="0"
+			aria-expanded="false"
+			aria-controls={ "bio-" + key }
+		>
+			if m.Image != "" {
+				<img src={ c.Asset(m.Image) } alt={ "Portrait of " + m.Name }/>
+			}
+			<div class="card-titles">
+				<h3>{ m.Name }</h3>
+				<p>{ m.Description }</p>
+				if showLanguage && m.Language != "" {
+					<p>{ "Language: " + m.Language }</p>
+				}
+			</div>
+		</div>
+		<div class="bio" id={ "bio-" + key }>
+			<div class="bio-inner"></div>
+			@MemberBio(c, m.Body)
+			<a href={ c.Link("credits/" + m.Slug + "/") }>See Gallery</a>
+		</div>
+	</div>
+}
+
+// LeaderCard is the compact, linked card used for the leaders on the home page.
+templ LeaderCard(c ssg.Ctx, m Member) {
+	<a class="b_card" href={ templpkg.SafeURL(c.Link("team/") + "#member-" + m.Slug) }>
+		<img src={ c.Asset(m.Image) } alt={ "Portrait of " + m.Name }/>
+		<h3>{ leaderLabel(m) }</h3>
+		<p>{ m.Description }</p>
+	</a>
+}
+
+// UpdateCard is one devlog in an index or on the home page.
+templ UpdateCard(c ssg.Ctx, u Update) {
+	<article class="post-card">
+		<a href={ c.Link("updates/" + u.Slug + "/") } class="card-link">
+			<div class="card-base">
+				<div class="card-meta">
+					<div class="card-date-author">
+						<time class="card-time">{ u.Date }</time>
+						by
+						<div class="card-author">{ u.Authors }</div>
+					</div>
+					<h2 class="card-title">{ u.Title }</h2>
+					<p class="card-summary">{ summaryOr(u.Summary) }</p>
+					<span class="card-cta">
+						Read Devlog <span class="card-arrow">&rarr;</span>
+					</span>
+				</div>
+			</div>
+		</a>
+	</article>
+}

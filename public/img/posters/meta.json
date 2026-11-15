@@ -1,0 +1,37 @@
+{
+  "NGEF_Poster.png": {
+    "credit": "anzeal",
+    "license": "",
+    "type": "image",
+    "tags": ["poster"],
+    "alt": "NGEF key art poster"
+  },
+  "NGEF_Mini_Poster.jpg": {
+    "credit": "ollie",
+    "license": "",
+    "type": "image",
+    "tags": ["poster"],
+    "alt": "NGEF mini poster"
+  },
+  "NGEF_Nere_Poster.png": {
+    "credit": "anzeal",
+    "license": "",
+    "type": "image",
+    "tags": ["poster"],
+    "alt": "Nere poster"
+  },
+  "Evil_Poster.jpg": {
+    "credit": "ollie",
+    "license": "",
+    "type": "image",
+    "tags": ["poster"],
+    "alt": "Evil poster"
+  },
+  "ellie_poster.png": {
+    "credit": "viann",
+    "license": "",
+    "type": "image",
+    "tags": ["poster"],
+    "alt": "Ellie poster"
+  }
+}

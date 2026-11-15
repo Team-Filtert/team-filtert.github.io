@@ -1,0 +1,246 @@
+package pages
+
+import (
+	"github.com/LukasDerBaum42/astwerk/ssg"
+	"github.com/Team-Filtert/Webside/templates"
+)
+
+// CreditGroup is one member's section on the credits page. Title is only set
+// for assets that have no member credit.
+type CreditGroup struct {
+	Member templates.Member
+	Title  string
+	Assets []templates.AssetEntry
+}
+
+templ Credits(c ssg.Ctx, people []templates.Member, groups []CreditGroup, tags []string) {
+	@templates.Layout(c, templates.Meta{
+		Title:       "Credits",
+		Description: "Everyone with catalogued artwork for Team Filtered, grouped by contributor.",
+	}, creditsStyles()) {
+		<header class="story">
+			<h1>Credits</h1>
+			<p>The people behind the artwork, and everything they have made.</p>
+		</header>
+		<section>
+			<details class="credits-people-details">
+				<summary>Everyone with catalogued artwork ({ len(people) })</summary>
+				<div class="credits-people">
+					for _, member := range people {
+						<a href={ c.Link("credits/" + member.Slug + "/") }>{ member.Name }</a>
+					}
+				</div>
+			</details>
+		</section>
+		<section>
+			<h2>Artwork</h2>
+			<div class="credits-filters">
+				<button
+					type="button"
+					class="tag-filter active"
+					data-credit-filter=""
+					aria-pressed="true"
+				>
+					All
+				</button>
+				for _, tag := range tags {
+					<button
+						type="button"
+						class="tag-filter"
+						id={ tag }
+						data-credit-filter={ tag }
+						aria-pressed="false"
+					>
+						{ tag }
+					</button>
+				}
+			</div>
+			<p class="credits-empty" data-credit-empty hidden>
+				No assets match this tag.
+			</p>
+			for _, group := range groups {
+				<section class="credits-member" data-credit-member>
+					if group.Member.Slug != "" {
+						<h2>
+							<a href={ c.Link("credits/" + group.Member.Slug + "/") }>{ group.Member.Name }</a>
+						</h2>
+					} else {
+						<h2>{ group.Title }</h2>
+					}
+					<div class="gallery">
+						for _, asset := range group.Assets {
+							@templates.AssetWithLicense(c, asset.ID)
+						}
+					</div>
+				</section>
+			}
+		</section>
+		<script type="module" src={ c.Asset("scripts/credits.js") }></script>
+	}
+}
+
+// creditsStyles is shared by the index and the per-member pages.
+templ creditsStyles() {
+	<style>
+			.credits-people-details {
+				max-width: none;
+				margin: 0 auto;
+				text-align: center;
+			}
+
+			.credits-people-details summary {
+				display: inline-block;
+				padding: 0.5rem 0.9rem;
+				color: var(--mint);
+				font-family: var(--font-display);
+				font-size: 1.05rem;
+				font-weight: 700;
+				list-style: none;
+				cursor: pointer;
+			}
+
+			.credits-people-details summary::-webkit-details-marker {
+				display: none;
+			}
+
+			.credits-people-details summary::before {
+				content: "▶";
+				margin-right: 0.45rem;
+				color: var(--green);
+				font-family: var(--font-body);
+				font-size: 0.7em;
+			}
+
+			.credits-people-details[open] summary::before {
+				content: "▼";
+			}
+
+			.credits-people-details summary:hover {
+				color: var(--green);
+			}
+
+			.credits-people-details[open] summary {
+				margin-bottom: 1rem;
+			}
+
+			.credits-people {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.6rem;
+				margin-top: 1rem;
+			}
+
+			.credits-people a {
+				padding: 0.35rem 0.8rem;
+				background: rgba(255, 255, 255, 0.04);
+				border: 1px solid var(--border);
+				border-radius: 0;
+				color: var(--mint);
+				text-decoration: none;
+				transition:
+					transform 0.2s ease,
+					background 0.2s ease,
+					border-color 0.2s ease,
+					color 0.2s ease;
+			}
+
+			.credits-people a:hover {
+				transform: translateY(-2px);
+				background: var(--green);
+				border-color: transparent;
+				color: #062114;
+			}
+
+			.credits-filters {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				gap: 0.5rem;
+				margin: 1rem 0 2rem;
+			}
+
+			.tag-filter {
+				padding: 0.4rem 0.85rem;
+				scroll-margin-top: 8rem;
+				margin: 0;
+				background: rgba(255, 255, 255, 0.06);
+				border: 1px solid var(--border);
+				border-radius: 0;
+				color: var(--text-soft);
+				font-family: var(--font-body);
+				font-size: 0.82rem;
+				cursor: pointer;
+				transition:
+					transform 0.2s ease,
+					background 0.2s ease,
+					border-color 0.2s ease,
+					color 0.2s ease;
+			}
+
+			.tag-filter:hover {
+				transform: translateY(-2px);
+				background: var(--green);
+				border-color: transparent;
+				color: #062114;
+			}
+
+			.tag-filter.active {
+				background: var(--green);
+				border-color: transparent;
+				color: #062114;
+			}
+
+			.credits-member {
+				margin-top: 2rem;
+				padding-top: 1.5rem;
+				border-top: 1px solid var(--border);
+			}
+
+			.credits-member h2 {
+				color: var(--mint);
+				text-align: center;
+			}
+
+			.credits-member h2 a {
+				color: var(--text);
+				text-decoration: none;
+			}
+
+			.credits-member h2 a:hover {
+				color: var(--green);
+				text-decoration: none;
+			}
+
+			.credits-empty {
+				color: var(--muted);
+				text-align: center;
+			}
+
+			.credits-bio {
+				max-width: none;
+				margin: 0 auto 2rem;
+				color: var(--text-soft);
+				line-height: 1.8;
+			}
+
+			.credits-back {
+				margin-top: 2rem;
+				text-align: center;
+			}
+
+			.credits-back a {
+				color: var(--mint);
+				font-family: var(--font-pixel);
+				font-size: 0.55rem;
+				line-height: 1.8;
+				text-decoration: none;
+				text-transform: uppercase;
+			}
+
+			.credits-back a:hover {
+				color: var(--green);
+				text-decoration: none;
+			}
+		</style>
+}

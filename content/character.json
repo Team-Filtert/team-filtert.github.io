@@ -1,0 +1,29 @@
+{
+  "Neuro" : {
+    "roll" : "Main Character",
+    "Description": "One half of the twins. Neuro is the one trying to keep everything together, which is easier said than done when your twin is Evil.",
+    "pfp" : "/img/characters/Neuro_pfp.jpg",
+    "Hiden" : false
+  },
+  "Evil" : {
+    "roll": "Main Character",
+    "Description": "Neuro's evil twin. She'd never admit it, but she's here to help. Mostly.",
+    "pfp" : "/img/characters/Evil_pfp.jpg",
+    "Hiden" : false
+  },
+  "Nere" : {
+    "roll" : "Main Villain",
+    "Description" : "The embodiment of the filter, and the reason the Neuroverse is in trouble. The twins have to stop her before she filters everyone they know.",
+    "pfp" : "/img/characters/nere.jpg",
+    "Hiden" : false
+  },
+  "Vedal" : {
+    "roll": "?",
+    "Description" : "The twins' creator, and the reason Nere is loose in the first place. One questionable night out, and suddenly everyone has to save the world.",
+    "pfp" : "/img/characters/Vedal.png",
+    "Hiden" : false
+  }
+}
+  
+
+
