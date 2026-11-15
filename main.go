@@ -84,16 +84,13 @@ func runServer(addr string) {
 	}
 }
 
-// TemplVersion is the templ release CI pins. Keep them in step.
-const TemplVersion = "v0.3.1020"
-
-// templCommand prefers an installed templ binary and falls back to go run,
-// matching how CI generates templates.
+// templCommand prefers an installed templ binary and falls back to the version
+// pinned by the tool directive in go.mod, matching how CI generates templates.
 func templCommand() (string, []string) {
 	if _, err := exec.LookPath("templ"); err == nil {
 		return "templ", []string{"generate"}
 	}
-	return "go", []string{"run", "github.com/a-h/templ/cmd/templ@" + TemplVersion, "generate"}
+	return "go", []string{"tool", "templ", "generate"}
 }
 
 func buildSite(includeDrafts bool, changed []string) {

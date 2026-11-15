@@ -36,7 +36,7 @@ jobs:
       - run: npm install -g typescript@6.0.3
 
       - name: Generate templates
-        run: go run github.com/a-h/templ/cmd/templ@v0.3.1020 generate
+        run: go tool templ generate
 
       # The site is served from the team-filtered.org domain root. Relative
       # URLs mean this build also works when previewed locally.

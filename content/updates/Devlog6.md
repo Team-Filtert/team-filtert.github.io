@@ -2,7 +2,7 @@
 title = "Devlog #6: Yet another rewrite..."
 summary = "I did another rewrite of the website. We made progress on the actual game."
 author = ["LukasDerBaum"]
-published = "draft"
+published = "2026-11-15"
 +++
 
 ## The website rewrite
@@ -52,7 +52,7 @@ If you don't like AI code that's fine, but I see AI as a useful tool for coding.
 
 If you're reading this, our official announcement video is out!
 
-You can check it out [here](Link needs to be added)
+You can check it out [here](https://youtu.be/3Ai9fYoQZX4?si=0hk92WBCs3kZ6aXa)
 
 
 
